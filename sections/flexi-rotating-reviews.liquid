@@ -1,0 +1,438 @@
+<!-- /sections/flexi-rotating-reviews.liquid -->
+<!-- Brandon Landgraff - Flexi Studio -->
+{{ 'flexi-styling.css' | asset_url | stylesheet_tag }}
+{{ 'flexi-javascript.js' | asset_url | script_tag }}
+
+
+{%- liquid
+  assign sectionid = section.id
+
+  assign bg_color = section.settings.bg_color
+  assign width = section.settings.width
+  assign display_options = section.settings.display_options
+
+  assign padding_top = section.settings.padding_top
+  assign padding_bottom = section.settings.padding_bottom
+  assign mobile_top_padding = section.settings.padding_top | times: 0.8 | round
+  assign mobile_bottom_padding = section.settings.padding_bottom | times: 0.8 | round
+
+  assign json_data = shop.metafields.flexi.flexistyling.value
+  assign animation = json_data.animation
+
+  if json_data == blank
+    assign animation = true
+  endif
+
+  if section.index <= 3
+    assign limit_animation = false
+  else
+    assign limit_animation = true
+  endif
+-%}
+
+{%- style -%}
+    .flexi-rotating-reviews--{{ sectionid }} {
+        background-color: {{ bg_color }};
+        padding-top: {{ padding_top }}px;
+        padding-bottom: {{ padding_bottom }}px;
+    }
+
+    @media only screen and (max-width: 768px) {
+        .flexi-rotating-reviews--{{ sectionid }} {
+            padding-top: {{ mobile_top_padding }}px;
+            padding-bottom: {{ mobile_bottom_padding }}px;
+        }
+    }
+
+    .flexi-blocks-wrapper--{{ sectionid }} {
+        display: block;
+        width: 100%;
+        margin: auto;
+        max-width: {{ width }}px;
+    }
+
+    @media (max-width: 768px) {
+        .flexi-blocks-wrapper--{{ sectionid }} {
+            padding: 0px .5em;
+        }
+    }
+  .swiper-top-{{ sectionid }} {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      padding-bottom: 1em;
+  }
+  .swiper-slide-{{ sectionid }} {
+      text-align: center;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+{%- endstyle -%}
+
+<section
+  class="flexi-rotating-reviews--{{ sectionid }} {{ display_options }}"
+>
+    <div id="flexi-embed-banner" style="display: none !important;">
+        <p>Congrats on adding a Flexi section! 🎉 Go to <strong>App Embeds on the left hand side if the screen in theme settings to remove this banner</strong>. <a href="https://www.loom.com/embed/16e29856e42b44ca9f0dfb6729397024?sid=c05f56fa-df24-48de-b42a-66f88c9c22ae">Make sure "Flexi Sections" is enabled.</a></p>
+    </div>
+  <div class="flexi-blocks-wrapper--{{ sectionid }}">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when '@app' %}
+          {% style %}
+            @media only screen and (max-width: 768px) {
+                .flexi--app-block--{{ block.id }} {
+                    padding-right: 0.5em;
+                    padding-left: 0.5em;
+                }
+            }
+          {% endstyle %}
+          <div class="flexi--app-block--{{ block.id }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+            {% render block %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+
+    <div class="swiper-top-{{ sectionid }}">
+      {% render 'flexi-top-rotating-reviews' %}
+    </div>
+
+    <!-- Slider main container -->
+    <div class="swiper swiper-{{ sectionid }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+      <!-- Additional required wrapper -->
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'reviews-card' %}
+              <div
+                class="flexi--app-block--{{ block.id }} swiper-slide swiper-slide-{{ sectionid }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}"
+                {{ block.shopify_attributes }}
+              >
+                {% render 'flexi-rotating-review-card', block: block %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Swiper JS -->
+
+<!-- Initialize Swiper -->
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelectorAll('.swiper-{{ sectionid }}').forEach((swiperContainer) => {
+      const swiper = new Swiper(swiperContainer, {
+        direction: 'vertical',
+        slidesPerView: 1,
+        loop: true,
+        autoplay: {
+          delay: 2500,
+          disableOnInteraction: false,
+        },
+        spaceBetween: 0,
+        grabCursor: true,
+        on: {
+          init: function () {
+            setSlideHeight(this);
+          },
+          slideChangeTransitionEnd: function () {
+            setSlideHeight(this);
+          },
+        },
+      });
+
+      function setSlideHeight(swiper) {
+        let maxHeight = 0;
+        swiper.slides.forEach((slide) => {
+          slide.style.height = 'auto'; // Reset to auto to get the real height
+          const slideHeight = slide.offsetHeight;
+          if (slideHeight > maxHeight) {
+            maxHeight = slideHeight;
+          }
+        });
+
+        swiper.slides.forEach((slide) => {
+          slide.style.height = maxHeight + 'px'; // Set all slides to the height of the tallest slide
+        });
+
+        swiper.el.style.height = maxHeight + 'px'; // Set the swiper container to the height of the tallest slide
+        swiper.updateAutoHeight(); // Update the swiper auto height
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Flexi • Rotating reviews",
+  "class": "flexi-rotating-reviews",
+  "settings": [
+    {
+      "type": "header",
+      "content": "REVIEWS CONTENT"
+    },
+    {
+      "type": "select",
+      "id": "star_type",
+      "label": "Star type",
+      "options": [
+        { "value": "5", "label": "5 Stars" },
+        { "value": "4.5", "label": "4.5 Stars" },
+        { "value": "4", "label": "4 Stars" }
+      ],
+      "default": "4.5"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "reviews_text",
+      "label": "Text",
+      "default": "37,776 Verfidied 5-star reviews"
+    },
+    {
+      "type": "url",
+      "id": "review_url",
+      "label": "Review URL"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "COLORS"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "font_color",
+      "label": "Star text color",
+      "default": "#707170"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#47DE46"
+    },
+    {
+      "type": "header",
+      "content": "VISIBILITY"
+    },
+    {
+      "type": "select",
+      "id": "display_options",
+      "label": "Visible On",
+      "default": "bl-hide-none",
+      "options": [
+        {
+          "value": "bl-hide-none",
+          "label": "All Screens"
+        },
+        {
+          "value": "bl-hide-desktop",
+          "label": "Mobile"
+        },
+        {
+          "value": "bl-hide-mobile",
+          "label": "Desktop"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "SPACING"
+    },
+    {
+      "type": "range",
+      "id": "width",
+      "min": 320,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "label": "Max width",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Top spacing",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Bottom spacing",
+      "default": 60
+    }
+  ],
+  "max_blocks": 16,
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "reviews-card",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "header",
+          "content": "REVIEW HEADING"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Review heading",
+          "default": "Love your product!"
+        },
+        {
+          "type": "range",
+          "id": "heading_font_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading font size",
+          "default": 20
+        },
+        {
+          "type": "color",
+          "id": "heading_color",
+          "label": "Heading color",
+          "default": "#000000"
+        },
+        {
+          "type": "header",
+          "content": "REVIEW"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "description",
+          "label": "Review text",
+          "default": "We enjoyed X, Y, and Z features about your product. + I use it everyday!"
+        },
+        {
+          "type": "range",
+          "id": "description_font_size",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Review font size",
+          "default": 16
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Review color",
+          "default": "#000000"
+        },
+        {
+          "type": "header",
+          "content": "NAME"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "name",
+          "label": "Name text",
+          "default": "JOHN D., 4/18/23"
+        },
+        {
+          "type": "range",
+          "id": "name_font_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Name font size",
+          "default": 14
+        },
+        {
+          "type": "color",
+          "id": "name_color",
+          "label": "Name color",
+          "default": "#707170"
+        },
+        {
+          "type": "header",
+          "content": "SPACING"
+        },
+        {
+          "type": "range",
+          "id": "gap",
+          "min": 0,
+          "max": 16,
+          "step": 1,
+          "unit": "px",
+          "label": "Gap",
+          "info": "Gap between review and name.",
+          "default": 6
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flexi • Rotating reviews",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "reviews-card"
+        },
+        {
+          "type": "reviews-card"
+        },
+        {
+          "type": "reviews-card"
+        },
+        {
+          "type": "reviews-card"
+        },
+        {
+          "type": "reviews-card"
+        },
+        {
+          "type": "reviews-card"
+        },
+        {
+          "type": "reviews-card"
+        },
+        {
+          "type": "reviews-card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

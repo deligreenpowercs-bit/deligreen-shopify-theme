@@ -1,0 +1,455 @@
+<!-- /sections/flexi-instagram.liquid -->
+<!-- Brandon Landgraff - Flexi Studio -->
+{{ 'flexi-styling.css' | asset_url | stylesheet_tag }}
+{{ 'flexi-javascript.js' | asset_url | script_tag }}
+
+{%- liquid
+    assign sectionid = section.id
+
+    assign bg_color = section.settings.bg_color
+    assign width = section.settings.width
+    assign display_options = section.settings.display_options
+
+    assign heading = section.settings.heading
+    assign instagram_handle = section.settings.handle
+    assign instagram_link = section.settings.instagram_link
+
+    assign mobile_image_count = section.settings.mobile_image_count
+    assign gap = section.settings.gap
+    assign scaled_gap = gap | times: 0.5 | round
+
+    assign heading_color = section.settings.heading_color
+    assign handle_color = section.settings.handle_color
+
+    assign heading_font_size = section.settings.heading_font_size
+    assign handle_font_size = section.settings.handle_font_size
+    assign scaled_heading_font_size = section.settings.heading_font_size | times: 0.90 | round
+    assign scaled_handle_font_size = section.settings.handle_font_size | times: 0.95 | round
+
+    assign padding_top = section.settings.padding_top
+    assign padding_bottom = section.settings.padding_bottom
+    assign mobile_top_padding = section.settings.padding_top | times: 0.6 | round
+    assign mobile_bottom_padding = section.settings.padding_bottom | times: 0.6 | round
+
+    assign json_data = shop.metafields.flexi.flexistyling.value
+    assign borderRadius = json_data.borderRadius
+    assign animation = json_data.animation
+  
+    if json_data == blank
+      assign borderRadius = 8
+      assign animation = true
+    endif
+
+    if section.index <= 3
+      assign limit_animation = false
+    else
+      assign limit_animation = true
+    endif
+  -%}
+  
+{%- style -%}
+
+.flexi-instagram-images--{{ sectionid }} {
+    background-color: {{ bg_color }};
+    padding-top: {{ padding_top }}px;
+    padding-bottom: {{ padding_bottom }}px;
+    padding-right: 2em;
+    padding-left: 2em;
+}
+
+@media only screen and (max-width: 768px) {
+    .flexi-instagram-images--{{ sectionid }} {
+        padding-top: {{ mobile_top_padding }}px;
+        padding-bottom: {{ mobile_bottom_padding }}px;
+        padding-right: 0.5em;
+        padding-left: 0.5em;
+    }
+}
+
+.flexi-blocks-wrapper--{{ sectionid }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    max-width: {{ width }}px;
+}
+
+.flexi-blocks--{{ sectionid }} {   
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.flexi-blocks-container--{{ sectionid }} {
+    padding: 0.5em;
+}
+
+.flexi-instagram-images--{{ sectionid }} .flexi--instagram-images-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  grid-gap: {{ gap }}px;
+  justify-content: center;
+  padding: 0px 0.5em;
+}
+
+.flexi-img-link {
+  display: block;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding-top: 100%;
+}
+
+.flexi-img-link img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.flexi-img-link svg {
+    display: block;
+    background-color: #D4D4D4;
+    margin: 0px;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+{% if gap >= 1 %}
+    .flexi-instagram-images--{{ sectionid }} .flexi-img-link {
+        border-radius: {{ borderRadius }}px;
+    }
+    .flexi-instagram-images--{{ sectionid }} .flexi-img-link svg {
+        border-radius: {{ borderRadius }}px;
+    }
+{% endif %}
+
+@media (max-width: 767px) {
+ .flexi-instagram-images--{{ sectionid }} .flexi--instagram-images-container {
+    grid-template-columns: repeat({{ mobile_image_count }}, 1fr);
+    grid-gap: {{ scaled_gap }}px;
+  }
+}
+
+/* TOP HEADING */
+.instagram-top-heading-{{ sectionid }} {
+    color: {{ heading_color }};
+    font-size: {{ heading_font_size }}px;
+    letter-spacing: 0;
+    line-height: normal;
+
+    padding: 0px;
+    margin: 0px;
+    padding-bottom: 12px;
+}
+@media (max-width: 768px) {
+    .instagram-top-heading-{{ sectionid }} {
+      font-size: {{ scaled_heading_font_size }}px;
+    }
+}
+
+/* BOTTOM HANDLE */
+.instagram-bottom-handle-{{ sectionid }} a {
+    color: {{ handle_color }};
+    font-size: {{ handle_font_size }}px;
+    letter-spacing: 0;
+    line-height: normal;
+
+    padding: 0px;
+    margin: 0px;
+    padding-bottom: 12px;
+}
+@media (max-width: 768px) {
+    .instagram-bottom-handle-{{ sectionid }} a {
+      font-size: {{ scaled_handle_font_size }}px;
+    }
+}
+{%- endstyle -%}
+
+  <section
+    class="flexi-instagram-images flexi-instagram-images--{{ sectionid }} {{ display_options }}">
+        <div id="flexi-embed-banner" style="display: none !important;">
+            <p>Congrats on adding a Flexi section! 🎉 Go to <strong>App Embeds on the left hand side if the screen in theme settings to remove this banner</strong>. <a href="https://www.loom.com/embed/16e29856e42b44ca9f0dfb6729397024?sid=c05f56fa-df24-48de-b42a-66f88c9c22ae">Make sure "Flexi Sections" is enabled.</a></p>
+        </div>
+        <div class="flexi-blocks-wrapper--{{ sectionid }}">
+          <div class="flexi-blocks--{{ sectionid }}">
+  
+            {% if heading != blank %}
+              <div class="flexi-blocks-container--{{ sectionid }}">
+                <div class="instagram-top-heading-{{ sectionid }}">{{ heading }}</div>
+              </div>
+            {% endif %}
+
+            <div class="flexi--instagram-images-container">
+                {% for block in section.blocks %}
+                    {% case block.type %}
+        
+                        {% when 'image' %}
+                          {% assign image = block.settings.image %}
+                          {%- liquid
+                            if section.index <= 3
+                              assign loading_strategy = 'eager'
+                              assign fetch_priority = 'high'
+                            else
+                              assign loading_strategy = 'lazy'
+                              assign fetch_priority = 'auto'
+                            endif
+                          
+                            assign widths = '165, 360, 535, 750, 1070, 1500'
+                          
+                          
+                            assign img_alt = image.alt | escape
+                          -%}
+                          {%- capture sizes -%}
+                            (min-width: 1200px) calc((1200px - 100px) / 2),
+                            (min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)
+                          {%- endcapture -%}
+                          <div class="flexi--app-block--{{ block.id }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}" {{ block.shopify_attributes }}>
+                            {% if image != blank %}
+                                <a href="{{ instagram_link }}" class="flexi-img-link {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+                                    {{ image | image_url: width: 512 | image_tag: 
+                                      sizes: sizes, 
+                                      widths: widths, 
+                                      loading: loading_strategy, 
+                                      fetchpriority: fetch_priority,
+                                      alt: img_alt 
+                                    }}
+                                </a>                          
+                            {% else %}
+                                <a href="{{ instagram_link }}" class="flexi-img-link {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+                                    {{ 'product-1' | placeholder_svg_tag }}  
+                                </a>
+                            {% endif %}
+                          </div>
+                    {% endcase %}
+                {% endfor %}
+            </div>
+
+            {% if instagram_handle != blank %}
+              <div class="flexi-blocks-container--{{ sectionid }}">
+                <div class="instagram-bottom-handle-{{ sectionid }}"><a href="{{ instagram_link }}">{{ instagram_handle }}</a></div>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+  </section>
+  
+  {% schema %}
+    {
+      "name": "Flexi • Instagram",
+      "class": "flexi-instagram",
+      "settings": [
+        {
+            "type": "header",
+            "content": "INSTAGRAM"
+        },
+        {
+            "type": "url",
+            "id": "instagram_link",
+            "label": "Instagram link",
+            "info": "Log onto instagram on your computer. Click on your profile, and reference your url."
+        },
+        {
+          "type": "select",
+          "id": "mobile_image_count",
+          "label": "Mobile image columns",
+          "default": "2",
+          "options": [
+            {
+              "value": "1",
+              "label": "One"
+            },
+            {
+              "value": "2",
+              "label": "Two"
+            }
+          ]
+        },
+        {
+            "type": "header",
+            "content": "HEADING TEXT"
+        },
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "Heading text",
+            "default": "#JoinTheMovement"
+        },
+        {
+            "type": "range",
+            "id": "heading_font_size",
+            "min": 12,
+            "max": 48,
+            "step": 1,
+            "unit": "px",
+            "label": "Heading font size",
+            "default": 26
+        },
+        {
+            "type": "color",
+            "id": "heading_color",
+            "label": "Heading color",
+            "default": "#000000"
+        },
+        {
+            "type": "header",
+            "content": "HANDLE"
+        },
+        {
+            "type": "inline_richtext",
+            "id": "handle",
+            "label": "Instagram Handle",
+            "default": "@BrandName"
+        },
+        {
+            "type": "range",
+            "id": "handle_font_size",
+            "min": 12,
+            "max": 48,
+            "step": 1,
+            "unit": "px",
+            "label": "Handle font size",
+            "default": 16
+        },
+        {
+            "type": "color",
+            "id": "handle_color",
+            "label": "Handle color",
+            "default": "#000000"
+        },
+        {
+            "type": "header",
+            "content": "IMAGE SETTINGS"
+        }, 
+        {
+            "type": "header",
+            "content": "COLORS"
+        }, 
+          {
+              "type": "color",
+              "id": "bg_color",
+              "label": "Background color"
+          }, 
+
+          {
+            "type": "header",
+            "content": "VISIBILITY"
+          },
+          {
+            "type": "select",
+            "id": "display_options",
+            "label": "Visible On",
+            "default": "bl-hide-none",
+            "options": [
+              {
+                "value": "bl-hide-none",
+                "label": "All Screens"
+              },
+              {
+                "value": "bl-hide-desktop",
+                "label": "Mobile"
+              },
+              {
+                "value": "bl-hide-mobile",
+                "label": "Desktop"
+              }
+            ]
+          },
+        {
+          "type": "header",
+          "content": "SPACING"
+        }, 
+        {
+          "type": "range",
+          "id": "width",
+          "min": 320,
+          "max": 1440,
+          "step": 20,
+          "unit": "px",
+          "label": "Max container width",
+          "default": 1200
+        },
+        {
+          "type": "range",
+          "id": "gap",
+          "min": 0,
+          "max": 24,
+          "step": 2,
+          "unit": "px",
+          "label": "Space between images",
+          "default": 12
+        },
+        {
+          "type": "range",
+          "id": "padding_top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Top spacing",
+          "default": 60
+        }, 
+        {
+          "type": "range",
+          "id": "padding_bottom",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Bottom spacing",
+          "default": 60
+        }
+      ],
+      "max_blocks": 5,
+      "blocks": [
+        {
+          "type": "@app"
+        },
+        {
+            "type": "image",
+            "name": "Image",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "ADD IMAGE",
+                    "info": "Download images from your instagram and upload them below."
+                }, 
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Instagram image"
+                }
+            ]
+        }
+      ],
+      "presets": [
+        {
+          "name": "Flexi • Instagram",
+          "category": "Text",
+          "blocks": [
+            {
+                "type": "image"
+            },
+            {
+                "type": "image"
+            },
+            {
+                "type": "image"
+            },
+            {
+                "type": "image"
+            }
+          ]
+        }
+      ]
+    }
+  {% endschema %}

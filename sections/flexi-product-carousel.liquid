@@ -1,0 +1,627 @@
+<!-- /sections/flexi-product-carousel.liquid -->
+<!-- Brandon Landgraff - Flexi Studio -->
+{{ 'flexi-styling.css' | asset_url | stylesheet_tag }}
+{{ 'flexi-javascript.js' | asset_url | script_tag }}
+
+{%- liquid
+    assign sectionid = section.id
+
+    assign heading_color = section.settings.heading_color
+    assign heading_font_size = section.settings.heading_font_size
+
+    assign bg_color = section.settings.bg_color
+    assign width = section.settings.width
+    assign card_width = section.settings.card_width
+
+    assign arrow_color = section.settings.arrow_color
+    assign scrollbar_color = section.settings.scrollbar_color
+    assign hide_arrows = section.settings.hide_arrows
+    assign hide_scrollbar = section.settings.hide_scrollbar
+
+    assign display_options = section.settings.display_options
+
+    assign padding_top = section.settings.padding_top
+    assign padding_bottom = section.settings.padding_bottom
+    assign mobile_top_padding = section.settings.padding_top | times: 0.8 | round
+    assign mobile_bottom_padding = section.settings.padding_bottom | times: 0.8 | round
+
+    assign json_data = shop.metafields.flexi.flexistyling.value
+    assign animation = json_data.animation
+
+    if json_data == blank
+      assign animation = true
+    endif
+
+    if section.index <= 3
+        assign limit_animation = false
+      else
+        assign limit_animation = true
+      endif
+  -%}
+
+{%- style -%}
+[data-flexi-scrollable-products="{{ sectionid }}"] {
+    background-color: {{ bg_color }};
+    padding-top: {{ padding_top }}px;
+    padding-bottom: {{ padding_bottom }}px;
+}
+
+@media only screen and (max-width: 768px) {
+    [data-flexi-scrollable-products="{{ sectionid }}"] {
+        padding-top: {{ mobile_top_padding }}px;
+        padding-bottom: {{ mobile_bottom_padding }}px;
+    }
+}
+
+[data-flexi-blocks-wrapper="{{ sectionid }}"] {
+    display: block;
+    width: 100%;
+    margin: auto;
+    max-width: {{ width }}px;
+    padding: 0px .5em;
+}
+
+[data-swiper-top="{{ sectionid }}"] {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+[data-swiper-top-heading="{{ sectionid }}"] {
+    position: relative;
+    align-self: stretch;
+    color: {{ heading_color }};
+    font-size: {{ heading_font_size }}px;
+    letter-spacing: 0;
+    line-height: normal;
+
+    padding: 0px !important;
+    margin: 0px !important;
+    padding-bottom: 12px !important;
+}
+
+.swiper {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-wrapper {
+    align-items: start;
+}
+
+[data-swiper-card="{{ sectionid }}"] {
+    max-width: {{ width }}px;
+    overflow: clip;
+}
+
+.swiper-slide-card-{{ sectionid }} {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+
+    max-width: {{ card_width }}px !important;
+    height: auto;
+}
+
+[data-swiper-arrows-container] {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 8px;
+    justify-content: flex-end;
+}
+
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-next,
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-prev {
+    position: static !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background-color: #e5e5e5 !important;
+    margin: 0px;
+    transition: background-color 0.3s ease;
+}
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-next:hover,
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-prev:hover,
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-next:active,
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-prev:active {
+    background-color: #CACACB !important;
+    opacity: 1 !important;
+}
+@media (min-width: 768px) {
+    [data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-prev {
+        left: 24px;
+    }
+}
+.swiper-button-prev:hover {
+    opacity: 0.5;
+}
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-next:after,
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-prev:after {
+    display: block;
+    font-size: 16px;
+    color: {{ arrow_color }};
+}
+
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-next:after {
+    margin-left: 2px;
+}
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-button-prev:after {
+    margin-right: 2px;
+}
+
+@media (max-width: 640px) {
+    [data-swiper-arrows-container] {
+        display: none !important;
+    }
+}
+
+.swiper-scrollbar {
+    position: static !important;
+    margin-top: 12px;
+}
+.swiper-scrollbar-drag {
+    display: block !important;
+}
+
+[data-flexi-scrollable-products="{{ sectionid }}"] .swiper-scrollbar-drag {
+    background: {{ scrollbar_color }} !important;
+}
+
+@media (max-width: 640px) {
+    [data-flexi-scrollable-products="{{ sectionid }}"] .swiper-wrapper {
+        width: 100vw;
+    }
+
+    .swiper-slide-card-{{ sectionid }} {
+        width: 80vw !important;
+        margin-right: 12px;
+    }
+}
+{%- endstyle -%}
+
+<section data-flexi-scrollable-products="{{ sectionid }}" class="{{ display_options }}">
+    <div id="flexi-embed-banner" style="display: none !important;">
+        <p>Congrats on adding a Flexi section! 🎉 Go to <strong>App Embeds on the left hand side if the screen in theme settings to remove this banner</strong>. <a href="https://www.loom.com/embed/16e29856e42b44ca9f0dfb6729397024?sid=c05f56fa-df24-48de-b42a-66f88c9c22ae">Make sure "Flexi Sections" is enabled.</a></p>
+    </div>
+    <div data-flexi-blocks-wrapper="{{ sectionid }}">
+
+        {% for block in section.blocks %}
+            {% case block.type %}
+
+                {% when '@app' %}
+                    {% style %}
+                        @media only screen and (max-width: 768px) {
+                            [data-flexi--app-block="{{ block.id }}"] {
+                                padding-right: 0.5em;
+                                padding-left: 0.5em;
+                            }
+                        }
+                    {% endstyle %}
+                    <div data-flexi--app-block="{{ block.id }}" {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+                        {% render block %}
+                    </div>   
+
+            {% endcase %}
+        {% endfor %}
+
+        <!-- Slider main container -->
+        <div data-swiper data-swiper-card="{{ sectionid }}" class="swiper-card-{{ sectionid }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+
+            <div data-swiper-top="{{ sectionid }}">
+                {% if section.settings.heading != blank %}
+                    <div data-swiper-top-heading="{{ sectionid }}">{{ section.settings.heading }}</div>
+                {% endif %}
+
+                <!-- If we need navigation buttons -->
+                {% if hide_arrows == false %}
+                    <div data-swiper-arrows-container>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Additional required wrapper -->
+            <div class="swiper-wrapper">
+                {% for block in section.blocks %}
+                    {% case block.type %}
+
+                        {% when 'product-card' %}
+                            <div data-flexi--app-block="{{ block.id }}" class="swiper-slide swiper-slide-card-{{ sectionid }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}" {{ block.shopify_attributes }}>
+                                {% assign product = block.settings.product_card %}
+                                {% render 'flexi-simple-product-card', product: product, block: block %}
+                            </div>
+
+                    {% endcase %}
+                {% endfor %}
+            </div>
+
+            {% if hide_scrollbar == false %}
+                <div class="swiper-scrollbar"></div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Swiper JS -->
+
+<!-- Initialize Swiper -->
+<script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+        document.querySelectorAll('.swiper-card-{{ sectionid }}').forEach((swiperContainer) => {
+            const swiper = new Swiper(swiperContainer, {
+                slidesPerView: 'auto',
+                spaceBetween: 0,
+                grabCursor: true,
+                loop: false,
+                navigation: {
+                    nextEl: swiperContainer.querySelector('.swiper-button-next'),
+                    prevEl: swiperContainer.querySelector('.swiper-button-prev'),
+                },
+                scrollbar: {
+                    el: ".swiper-scrollbar",
+                    hide: true,
+                },
+                breakpoints: {
+                    640: {
+                        spaceBetween: 12,
+                    },
+                },
+                on: {
+                    init: function () {
+                        adjustSlideHeights(this);
+                    },
+                    resize: function () {
+                        adjustSlideHeights(this);
+                    }
+                }
+            });
+        });
+
+        function adjustSlideHeights(swiper) {
+            let maxHeight = 0;
+            swiper.slides.forEach((slide) => {
+                const slideHeight = slide.offsetHeight;
+                if (slideHeight > maxHeight) {
+                    maxHeight = slideHeight;
+                }
+            });
+            swiper.slides.forEach((slide) => {
+                slide.style.height = maxHeight + 'px';
+            });
+        }
+    });
+</script>
+
+  
+{% schema %}
+    {
+      "name": "Flexi • Product carousel",
+      "class": "flexi-product-carousel",
+      "settings": [
+        {
+            "type": "header",
+            "content": "HEADING"
+        },
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "Heading text",
+            "default": "View Products"
+        },
+        {
+            "type": "range",
+            "id": "heading_font_size",
+            "min": 12,
+            "max": 48,
+            "step": 1,
+            "unit": "px",
+            "label": "Heading font size",
+            "default": 26
+        },
+        {
+            "type": "color",
+            "id": "heading_color",
+            "label": "Heading color",
+            "default": "#000000"
+        },
+        {
+            "type": "header",
+            "content": "COLORS"
+        }, 
+        {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background color"
+        }, 
+        {
+            "type": "header",
+            "content": "SLIDER SETTINGS"
+        },
+        {
+            "type": "color",
+            "id": "arrow_color",
+            "label": "Arrow color",
+            "default": "#000000"
+        },
+        {
+            "type": "checkbox",
+            "id": "hide_arrows",
+            "label": "Hide arrows",
+            "default": false
+        },
+        {
+            "type": "color",
+            "id": "scrollbar_color",
+            "label": "Scrollbar color",
+            "default": "#727272"
+        },
+        {
+            "type": "checkbox",
+            "id": "hide_scrollbar",
+            "label": "Hide scrollbar",
+            "default": false
+        },
+        {
+            "type": "header",
+            "content": "VISIBILITY"
+          },
+          {
+            "type": "select",
+            "id": "display_options",
+            "label": "Visible On",
+            "default": "bl-hide-none",
+            "options": [
+              {  
+                "value": "bl-hide-none",
+                "label": "All Screens"
+              },
+              {
+                "value": "bl-hide-desktop",
+                "label": "Mobile"
+              },
+              {
+                "value": "bl-hide-mobile",
+                "label": "Desktop"
+              }
+            ]
+          },
+          {
+            "type": "header",
+            "content": "SIZING"
+          },
+          {
+              "type": "range",
+              "id": "width",
+              "min": 320,
+              "max": 1440,
+              "step": 20,
+              "unit": "px",
+              "label": "Slider width",
+              "default": 1000,
+              "info": "Desktop only."
+          },
+          {
+              "type": "range",
+              "id": "card_width",
+              "min": 100,
+              "max": 500,
+              "step": 10,
+              "unit": "px",
+              "label": "Card width",
+              "default": 300
+          },
+        {
+          "type": "header",
+          "content": "SPACING"
+        }, 
+        {
+          "type": "range",
+          "id": "padding_top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Top spacing",
+          "default": 60
+        }, 
+        {
+          "type": "range",
+          "id": "padding_bottom",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Bottom spacing",
+          "default": 60
+        }
+      ],
+      "max_blocks": 16,
+      "blocks": [
+        {
+          "type": "@app"
+        },
+        {
+            "type": "product-card",
+            "name": "Product",
+            "settings": [
+                {
+                    "type": "product",
+                    "id": "product_card",
+                    "label": "Pick product",
+                    "info": "Save your theme to view your changes."
+                },
+                {
+                    "type": "header",
+                    "content": "IMAGE"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "IMAGE",
+                    "info": "Replace your original product image."
+                },
+                {
+                    "type": "select",
+                    "id": "image_height",
+                    "label": "Image height",
+                    "default": "auto",
+                    "options": [
+                      {
+                        "value": "auto",
+                        "label": "Auto"
+                      },
+                      {
+                        "value": "200px",
+                        "label": "Short"
+                      },
+                      {
+                        "value": "300px",
+                        "label": "Tall"
+                      }
+                    ]
+                },
+                {
+                    "type": "header",
+                    "content": "SUBHEADING"
+                },
+                {
+                    "type": "inline_richtext",
+                    "id": "subheading",
+                    "label": "Subheading text",
+                    "default": "Subheading"
+                },
+                {
+                    "type": "range",
+                    "id": "subheading_font_size",
+                    "min": 12,
+                    "max": 48,
+                    "step": 1,
+                    "unit": "px",
+                    "label": "Subheading font size",
+                    "default": 16
+                },
+                {
+                    "type": "color",
+                    "id": "subheading_color",
+                    "label": "Subheading color",
+                    "default": "#000000"
+                },
+                {
+                    "type": "header",
+                    "content": "PRODUCT TITLE"
+                },
+                {
+                    "type": "range",
+                    "id": "title_font_size",
+                    "min": 12,
+                    "max": 48,
+                    "step": 1,
+                    "unit": "px",
+                    "label": "Title font size",
+                    "default": 24
+                },
+                {
+                    "type": "color",
+                    "id": "title_color",
+                    "label": "Title color",
+                    "default": "#000000"
+                },
+                {
+                    "type": "header",
+                    "content": "PRICE"
+                },
+                {
+                    "type": "range",
+                    "id": "price_font_size",
+                    "min": 12,
+                    "max": 24,
+                    "step": 1,
+                    "unit": "px",
+                    "label": "Price font size",
+                    "default": 16
+                },
+                {
+                    "type": "color",
+                    "id": "price_color",
+                    "label": "Price color",
+                    "default": "#000000"
+                },
+                {
+                    "type": "header",
+                    "content": "COLORS"
+                },
+                {
+                    "type": "color",
+                    "id": "bg_color",
+                    "label": "Background color"
+                },
+                {
+                    "type": "header",
+                    "content": "SPACING"
+                },
+                {
+                    "type": "range",
+                    "id": "gap",
+                    "min": 0,
+                    "max": 16,
+                    "step": 1,
+                    "unit": "px",
+                    "label": "Gap",
+                    "default": 6
+                }
+            ]
+        }
+      ],
+      "presets": [
+        {
+          "name": "Flexi • Product carousel",
+          "category": "Text",
+          "blocks": [
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            }
+          ]
+        }
+      ]
+    }
+{% endschema %}

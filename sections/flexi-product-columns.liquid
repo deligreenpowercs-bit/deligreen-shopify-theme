@@ -1,0 +1,354 @@
+<!-- /sections/flexi-product-columns.liquid -->
+<!-- Brandon Landgraff - Flexi Studio -->
+{{ 'flexi-styling.css' | asset_url | stylesheet_tag }}
+{{ 'flexi-javascript.js' | asset_url | script_tag }}
+
+{%- liquid
+    assign sectionid = section.id
+
+    assign bg_color = section.settings.bg_color
+    assign width = section.settings.width
+    assign column_gap = section.settings.column_gap 
+
+    assign json_data = shop.metafields.flexi.flexistyling.value
+    assign animation = json_data.animation
+  
+    if json_data == blank
+        assign animation = true
+    endif
+
+    if section.index <= 3
+        assign limit_animation = false
+      else
+        assign limit_animation = true
+      endif
+  -%}
+  
+{%- style -%}
+/* SECTION STYLES */
+.flexi-featured-products--{{ sectionid }} {
+    background-color: {{ bg_color }};
+    padding: 2em 2em;
+}
+
+@media only screen and (max-width: 768px) {
+    .flexi-featured-products--{{ sectionid }} {
+        padding: 1em 0.5em;
+    }
+}
+
+.flexi-blocks-wrapper--{{ sectionid }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    max-width: {{ width }}px;
+}
+
+.flexi-blocks--{{ sectionid }} {   
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    gap: {{ column_gap }}px;
+}
+
+@media (max-width: 768px) {
+    .flexi-blocks--{{ sectionid }} { 
+        grid-template-columns: 1fr;
+    }
+}
+
+.flexi-app-blocks--{{ sectionid }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 0 0.5em;
+}
+
+.flexi-product-card-container-{{ section.id }} {
+    display: grid;
+    gap: 6px;
+}
+
+/* SPIN WHEEL */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loader {
+    border: 2px solid #F3F3F3;
+    border-top: 2px solid #C7C7C7;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+{%- endstyle -%}
+  
+  <section
+    class="flexi-featured-products--{{ sectionid }}">
+    <div id="flexi-embed-banner" style="display: none !important;">
+        <p>Congrats on adding a Flexi section! 🎉 Go to <strong>App Embeds on the left hand side if the screen in theme settings to remove this banner</strong>. <a href="https://www.loom.com/embed/16e29856e42b44ca9f0dfb6729397024?sid=c05f56fa-df24-48de-b42a-66f88c9c22ae">Make sure "Flexi Sections" is enabled.</a></p>
+    </div>
+        <div class="flexi-blocks-wrapper--{{ sectionid }}">
+            <div class="flexi-app-blocks--{{ sectionid }}">
+                {% for block in section.blocks %}
+                    {% case block.type %}
+                        {% when '@app' %}
+                            <div class="flexi--app-block--{{ block.id }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+                                {% render block %}
+                            </div>   
+                    {% endcase %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="flexi-blocks-wrapper--{{ sectionid }}">
+            <div class="flexi-blocks--{{ sectionid }}">
+                {% for block in section.blocks %}
+                    {% case block.type %}
+
+                        {% when 'product-card' %}
+                            <div class="flexi-product-card-{{ sectionid }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}" {{ block.shopify_attributes }}>
+                                {% assign product = block.settings.product_card %}
+                                {%- render 'flexi-product-card', product: product, block: block -%}
+                            </div>
+                    {% endcase %}
+                {% endfor %}
+            </div>
+        </div>
+
+  </section>
+  
+  {% schema %}
+    {
+      "name": "Flexi • Product columns",
+      "class": "flexi-product-columns",
+      "settings": [
+        {
+            "type": "header",
+            "content": "COLORS"
+        },
+        {
+            "type": "color",
+            "id": "text_color",
+            "label": "Text color",
+            "default": "#000000"
+        },
+        {
+            "type": "color",
+            "id": "accent_color",
+            "label": "Buy buttons color",
+            "default": "#000000",
+            "info": "Adjust add-to-cart button color."
+        },
+        {
+            "type": "color",
+            "id": "discount_color",
+            "label": "Discount color",
+            "default": "#FFFFFF",
+            "info": "Adjust discount color."
+        },
+        {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background color"
+        },
+        {
+            "type": "header",
+            "content": "BUTTONS"
+        },
+        {
+            "type": "select",
+            "id": "active_color",
+            "label": "Button text color",
+            "default": "#ffffff",
+            "options": [
+                {
+                    "value": "#ffffff",
+                    "label": "Light"
+                }, 
+                {
+                    "value": "#000000",
+                    "label": "Dark"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "variant_outline_color",
+            "label": "Variant outlines",
+            "default": "#D9D9D9",
+            "options": [
+                {
+                    "value": "#D9D9D9",
+                    "label": "Light"
+                }, 
+                {
+                    "value": "#000000",
+                    "label": "Dark"
+                }
+            ]
+        },
+        {
+            "type": "header",
+            "content": "BASIC SETTINGS"
+        },
+        {
+            "type": "checkbox",
+            "id": "no_redirect",
+            "label": "Redirect to cart page",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "atc_text",
+            "label": "Add To Cart Text",
+            "default": "Add To Cart"
+        },
+        {
+            "type": "header",
+            "content": "SPACING"
+        },
+        {
+            "type": "range",
+            "id": "width",
+            "min": 320,
+            "max": 1440,
+            "step": 20,
+            "unit": "px",
+            "label": "Max container width",
+            "default": 1200
+        },
+        {
+            "type": "range",
+            "id": "column_gap",
+            "min": 0,
+            "max": 32,
+            "step": 1,
+            "unit": "px",
+            "label": "Space between columns",
+            "default": 24
+        }
+      ],
+      "max_blocks": 10,
+      "blocks": [
+        {
+          "type": "@app"
+        },
+        {
+            "type": "product-card",
+            "name": "Product",
+            "settings": [
+                {
+                    "type": "product",
+                    "id": "product_card",
+                    "label": "Pick product"
+                },
+                {
+                    "type": "header",
+                    "content": "IMAGE"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Replace product image",
+                    "info": "Replace your original product image."
+                },
+                {
+                    "type": "select",
+                    "id": "image_height",
+                    "label": "Image height",
+                    "default": "auto",
+                    "options": [
+                      {
+                        "value": "auto",
+                        "label": "Auto"
+                      },
+                      {
+                        "value": "200px",
+                        "label": "Short"
+                      },
+                      {
+                        "value": "300px",
+                        "label": "Tall"
+                      }
+                    ]
+                },
+                {
+                    "type": "header",
+                    "content": "SUBHEADING"
+                },
+                {
+                    "type": "inline_richtext",
+                    "id": "subheading",
+                    "label": "Subheading text",
+                    "default": "Subheading"
+                },
+                {
+                    "type": "range",
+                    "id": "subheading_font_size",
+                    "min": 12,
+                    "max": 48,
+                    "step": 1,
+                    "unit": "px",
+                    "label": "Subheading font size",
+                    "default": 16
+                },
+                {
+                    "type": "color",
+                    "id": "subheading_color",
+                    "label": "Subheading color",
+                    "default": "#000000"
+                },
+                {
+                    "type": "header",
+                    "content": "PRODUCT TITLE"
+                },
+                {
+                    "type": "range",
+                    "id": "title_font_size",
+                    "min": 12,
+                    "max": 48,
+                    "step": 1,
+                    "unit": "px",
+                    "label": "Title font size",
+                    "default": 24
+                },
+                {
+                    "type": "header",
+                    "content": "COLORS"
+                },
+                {
+                    "type": "color",
+                    "id": "bg_color",
+                    "label": "Card color"
+                }
+            ]
+        }
+      ],
+      "presets": [
+        {
+          "name": "Flexi • Product columns",
+          "category": "Product",
+          "blocks": [
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            },
+            {
+                "type": "product-card"
+            }
+          ]
+        }
+      ]
+    }
+  {% endschema %}

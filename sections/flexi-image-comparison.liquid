@@ -1,0 +1,399 @@
+<!-- /sections/flexi-image-comparison.liquid -->
+<!-- Brandon Landgraff - Flexi Studio -->
+{{ 'flexi-styling.css' | asset_url | stylesheet_tag }}
+{{ 'flexi-javascript.js' | asset_url | script_tag }}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha512-L7MWcK7FNPcwNqnLdZq86lTHYLdQqZaz5YcAgE+5cnGmlw8JT03QB2+oxL100UeB6RlzZLUxCGSS4/++mNZdxw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{%- liquid
+    assign sectionid = section.id
+
+    assign bg_color = section.settings.bg_color
+    assign width = section.settings.width
+    assign display_options = section.settings.display_options 
+
+    assign image_before = section.settings.image_before
+    assign image_after = section.settings.image_after
+    assign before = section.settings.before
+    assign after =  section.settings.after
+
+    assign padding_top = section.settings.padding_top
+    assign padding_bottom = section.settings.padding_bottom
+    assign mobile_top_padding = section.settings.padding_top | times: 0.6 | round
+    assign mobile_bottom_padding = section.settings.padding_bottom | times: 0.6 | round
+
+    assign json_data = shop.metafields.flexi.flexistyling.value
+    assign borderRadius = json_data.borderRadius
+    assign animation = json_data.animation
+  
+    if json_data == blank
+      assign borderRadius = 8
+      assign animation = true
+    endif
+
+    if section.index <= 3
+      assign limit_animation = false
+      assign loading_strategy = 'eager'
+      assign fetch_priority = 'high'
+    else
+      assign limit_animation = true
+      assign loading_strategy = 'lazy'
+      assign fetch_priority = 'auto'
+    endif
+
+    assign widths = '165, 360, 535, 750, 1070, 1500'
+
+    assign img_alt = image.alt | escape
+  -%}
+  {%- capture sizes -%}
+    (min-width: 1200px) calc((1200px - 100px) / 2),
+    (min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)
+  {%- endcapture -%}
+  
+{%- style -%}
+  
+/* SECTION STYLES */
+.flexi-image-comparison--{{ sectionid }} {
+    background-color: {{ bg_color }};
+    padding-top: {{ padding_top }}px;
+    padding-bottom: {{ padding_bottom }}px;
+    padding-right: 2em;
+    padding-left: 2em;
+}
+
+@media only screen and (max-width: 768px) {
+    .flexi-image-comparison--{{ sectionid }} {
+        padding-top: {{ mobile_top_padding }}px;
+        padding-bottom: {{ mobile_bottom_padding }}px;
+        padding-right: 0.5em;
+        padding-left: 0.5em;
+    }
+}
+
+.flexi-blocks-wrapper--{{ sectionid }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    max-width: {{ width }}px;
+}
+
+.flexi-blocks--{{ sectionid }} {   
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.flexi-blocks-container--{{ sectionid }} {
+    max-width: 768px;
+    width: 100%;
+    margin: auto;
+}
+
+/* IMAGE COMPARISON */
+.flexi-image-comparison-slider {
+  position: relative;
+  width: min(80vw, 768px);
+  overflow: hidden;
+  border-radius: {{ borderRadius }}px;
+  cursor: col-resize;
+  margin: auto;
+
+  max-height: 500px;
+}
+@media only screen and (max-width: 768px) {
+    .flexi-image-comparison-slider {
+        width: 100%;
+
+        max-height: 300px;
+    }
+}
+.flexi-image-comparison-slider img {
+  display: block;
+  width: min(80vw, 768px);
+  height: auto;
+  max-height: 80vh;
+  object-fit: cover;
+  pointer-events: none;
+  user-select: none;
+
+  max-height: 500px;
+}
+@media only screen and (max-width: 768px) {
+    .flexi-image-comparison-slider img {
+        width: 100vw;
+    }
+}
+.flexi-image-comparison-slider .flexi-img-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  transform: translateZ(0); 
+}
+.flexi-image-comparison-slider .flexi-img-wrapper img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+}
+.flexi-image-comparison-slider .label {
+  position: absolute;
+  top: 1rem;
+  z-index: 3;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.33);
+  border-radius: {{ borderRadius }}px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  text-align: center;
+  letter-spacing: 1px;
+  user-select: none;
+  opacity: 0;
+  transition: 0.25s cubic-bezier(.68,.26,.58,1.22);
+}
+.flexi-image-comparison-slider:hover .label {
+  opacity: 1!important;
+
+}
+.flexi-image-comparison-slider .label.label-before {
+  left: 1rem;
+}
+.flexi-image-comparison-slider .label.label-after {
+  right: 1rem;
+}
+.flexi-image-comparison-slider .handle {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 50px/2);
+  width: 50px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  z-index: 2;
+}
+.flexi-image-comparison-slider .handle-line {
+  width: 2px;
+  flex-grow: 1;
+  background-color: #fff;
+}
+.flexi-image-comparison-slider .handle-circle {
+  width: 50px;
+  height: 50px;
+  color: #fff;
+
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: rgba(0,0,0,0.5);
+}
+
+
+{%- endstyle -%}
+  
+  <section
+    class="flexi-image-comparison--{{ sectionid }} {{ display_options }}">
+        <div id="flexi-embed-banner" style="display: none !important;">
+            <p>Congrats on adding a Flexi section! 🎉 Go to <strong>App Embeds on the left hand side if the screen in theme settings to remove this banner</strong>. <a href="https://www.loom.com/embed/16e29856e42b44ca9f0dfb6729397024?sid=c05f56fa-df24-48de-b42a-66f88c9c22ae">Make sure "Flexi Sections" is enabled.</a></p>
+        </div>
+        <div class="flexi-blocks-wrapper--{{ sectionid }}">
+          <div class="flexi-blocks--{{ sectionid }}">
+
+                <div id="flexi-image-comparison-slider" class="flexi-image-comparison-slider {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+                  {% if image_before != blank %}
+                    {{ image_before | image_url: width: 2048 | image_tag:
+                      sizes: sizes, 
+                      widths: widths, 
+                      loading: loading_strategy, 
+                      fetchpriority: fetch_priority,
+                      alt: img_alt 
+                    }}
+                  {% else %}
+                    <img src="{{ 'flexi-placeholder-background.png' | asset_url }}" alt="First Image Placeholder">
+                  {% endif %}
+                    <div class="flexi-img-wrapper">
+                        {% if image_after != blank %}
+                          {{ image_after | image_url: width: 2048 | image_tag:
+                            sizes: sizes, 
+                            widths: widths, 
+                            loading: loading_strategy, 
+                            fetchpriority: fetch_priority,
+                            alt: img_alt 
+                          }}
+                        {% else %}
+                          <img src="{{ 'flexi-placeholder-background.png' | asset_url }}" alt="Second Image Placeholder" style="transform: rotate(90deg);">
+                        {% endif %}
+                    </div>
+                    {% if before != blank %}
+                        <span class="label label-before">{{ before }}</span>
+                    {% endif %}
+                    {% if after != blank %}
+                        <span class="label label-after">{{ after }}</span>
+                    {% endif %}
+                    <div class="handle">
+                    <div class="handle-line"></div>
+                    <div class="handle-circle">
+                        <i class="fas fa-chevron-left"></i>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="handle-line"></div>
+                    </div>
+                </div>
+
+          </div>
+        </div>
+  </section>
+
+  <script defer>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Select all slider components based on the class
+      const sliders = document.querySelectorAll(".flexi-image-comparison-slider");
+      
+      sliders.forEach(function(slider) {
+        const sliderImgWrapper = slider.querySelector(".flexi-img-wrapper");
+        const sliderHandle = slider.querySelector(".handle");
+        
+        function sliderMouseMove(event) {
+          if (slider.isSliderLocked) return;
+    
+          const sliderRect = slider.getBoundingClientRect();
+          let mouseX = (event.clientX || event.touches[0].clientX) - sliderRect.left;
+          if (mouseX < 0) mouseX = 0;
+          else if (mouseX > sliderRect.width) mouseX = sliderRect.width;
+          
+          sliderImgWrapper.style.width = `${((1 - mouseX / sliderRect.width) * 100).toFixed(4)}%`;
+          sliderHandle.style.left = `calc(${((mouseX / sliderRect.width) * 100).toFixed(4)}% - ${sliderHandle.offsetWidth / 2}px)`;
+        }
+        
+        slider.addEventListener("mousemove", sliderMouseMove);
+        slider.addEventListener("touchmove", sliderMouseMove);
+        
+        slider.addEventListener("mousedown", () => { slider.isSliderLocked = false; });
+        slider.addEventListener("touchstart", () => { slider.isSliderLocked = false; });
+        slider.addEventListener("mouseup", () => { slider.isSliderLocked = true; });
+        slider.addEventListener("touchend", () => { slider.isSliderLocked = true; });
+        slider.addEventListener("mouseleave", () => { slider.isSliderLocked = true; });
+        
+        // Initialize a property on the slider element to track its "locked" state
+        slider.isSliderLocked = false;
+      });
+    });
+    
+  </script>
+  
+  {% schema %}
+    {
+      "name": "Flexi • Image comparison",
+      "class": "flexi-image-comparison",
+      "settings": [
+        {
+            "type": "header",
+            "content": "Image content"
+        },
+        {
+            "type": "image_picker",
+            "id": "image_before",
+            "label": "Image before"
+        },
+        {
+            "type": "text",
+            "id": "before",
+            "label": "Before",
+            "default": "Before"
+        },
+        {
+            "type": "image_picker",
+            "id": "image_after",
+            "label": "Image after"
+        },
+        {
+            "type": "text",
+            "id": "after",
+            "label": "After",
+            "default": "After"
+        },
+        {
+            "type": "header",
+            "content": "COLORS"
+        }, 
+        {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background color"
+        }, 
+        {
+        "type": "header",
+        "content": "VISIBILITY"
+        },
+        {
+            "type": "select",
+            "id": "display_options",
+            "label": "Visible On",
+            "default": "bl-hide-none",
+            "options": [
+                {
+                    "value": "bl-hide-none",
+                    "label": "All Screens"
+                },
+                {
+                    "value": "bl-hide-desktop",
+                    "label": "Mobile"
+                },
+                {
+                    "value": "bl-hide-mobile",
+                    "label": "Desktop"
+                }
+        ]
+        },
+        {
+          "type": "header",
+          "content": "SPACING"
+        }, 
+        {
+          "type": "range",
+          "id": "width",
+          "min": 320,
+          "max": 1440,
+          "step": 20,
+          "unit": "px",
+          "label": "Max container width",
+          "default": 1200
+        },
+        {
+          "type": "range",
+          "id": "padding_top",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Top spacing",
+          "default": 60
+        }, 
+        {
+          "type": "range",
+          "id": "padding_bottom",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Bottom spacing",
+          "default": 60
+        }
+      ],
+      "presets": [
+        {
+          "name": "Flexi • Image comparison",
+          "category": "Text"
+        }
+      ]
+    }
+  {% endschema %}

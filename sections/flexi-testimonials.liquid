@@ -1,0 +1,587 @@
+<!-- /sections/flexi-testimonials.liquid -->
+<!-- Brandon Landgraff - Flexi Studio -->
+{{ 'flexi-styling.css' | asset_url | stylesheet_tag }}
+{{ 'flexi-javascript.js' | asset_url | script_tag }}
+
+
+{%- liquid
+  assign sectionid = section.id
+
+  assign bg_color = section.settings.bg_color
+  assign width = section.settings.width
+  assign heading_color = section.settings.heading_color
+  assign heading_font_size = section.settings.heading_font_size
+  assign card_width = section.settings.card_width
+  assign arrow_color = section.settings.arrow_color
+  assign display_options = section.settings.display_options
+  assign heading = section.settings.heading
+  assign hide_arrows = section.settings.hide_arrows
+
+  assign padding_top = section.settings.padding_top
+  assign padding_bottom = section.settings.padding_bottom
+  assign mobile_top_padding = section.settings.padding_top | times: 0.8 | round
+  assign mobile_bottom_padding = section.settings.padding_bottom | times: 0.8 | round
+
+  assign json_data = shop.metafields.flexi.flexistyling.value
+  assign animation = json_data.animation
+
+  if json_data == blank
+    assign animation = true
+  endif
+
+  if section.index <= 3
+    assign limit_animation = false
+  else
+    assign limit_animation = true
+  endif
+-%}
+
+{%- style -%}
+  /* SECTION STYLES */
+  .flexi-testimonials--{{ sectionid }} {
+      background-color: {{ bg_color }};
+      padding-top: {{ padding_top }}px;
+      padding-bottom: {{ padding_bottom }}px;
+  }
+
+  @media only screen and (max-width: 768px) {
+      .flexi-testimonials--{{ sectionid }} {
+          padding-top: {{ mobile_top_padding }}px;
+          padding-bottom: {{ mobile_bottom_padding }}px;
+      }
+  }
+
+  .flexi-blocks-wrapper--{{ sectionid }} {
+      display: block;
+      width: 100%;
+      margin: auto;
+      max-width: {{ width }}px;
+      padding: 0px .5em;
+  }
+
+  /* CAROUSEL */
+  .swiper-top-{{ sectionid }} {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+  }
+  @media only screen and (max-width: 768px) {
+    .swiper-top-{{ sectionid }} {
+      justify-content: center;
+    }
+  }
+
+  .swiper-top-heading-{{ sectionid }} {
+      position: relative;
+      align-self: stretch;
+      color: {{ heading_color }};
+      font-size: {{ heading_font_size }}px;
+      letter-spacing: 0;
+      line-height: normal;
+
+      padding: 0px !important;
+      margin: 0px !important;
+      padding-bottom: 12px !important;
+  }
+
+  .swiper {
+      display: block;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+  }
+
+  .flexi-testimonials--{{ sectionid }} .swiper-wrapper {
+      align-items: start;
+      margin: 0px 26px;
+  }
+
+  .swiper-testimonial-card-{{ sectionid }} {
+      max-width: {{ width }}px;
+  }
+
+  .swiper-slide-card-{{ sectionid }} {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+
+      max-width: {{ card_width }}px !important;
+      height: auto;
+  }
+
+  /* ARROW STYLES */
+  .flexi-testimonials--{{ sectionid }} .swiper-button-next,
+  .flexi-testimonials--{{ sectionid }} .swiper-button-prev {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 40px !important;
+        height: 40px !important;
+        top: 50% !important;
+        border-radius: 50% !important;
+        background-color: #e5e5e5 !important;
+        margin: 0px;
+        transition: background-color 0.3s ease;
+        opacity: .5
+  }
+  .flexi-testimonials--{{ sectionid }} .swiper-button-next:hover,
+  .flexi-testimonials--{{ sectionid }} .swiper-button-prev:hover,
+  .flexi-testimonials--{{ sectionid }} .swiper-button-next:active,
+  .flexi-testimonials--{{ sectionid }} .swiper-button-prev:active {
+        background-color: #CACACB !important;
+        opacity: .7 !important;
+  }
+
+  .flexi-testimonials--{{ sectionid }} .swiper-button-prev {
+        left: 6px;
+  }
+  .flexi-testimonials--{{ sectionid }} .swiper-button-next {
+        right: 6px;
+  }
+  .flexi-testimonials--{{ sectionid }} .swiper-button-next:after,
+  .flexi-testimonials--{{ sectionid }} .swiper-button-prev:after {
+        font-size: 16px;
+        color: {{ arrow_color }};
+  }
+
+  /* On devices with a width up to 640px */
+  @media (max-width: 768px) {
+      .flexi-testimonials--{{ sectionid }} .swiper-wrapper {
+          width: 100vw;
+      }
+
+      .swiper-slide-card-{{ sectionid }} {
+          width: 80vw !important;
+      }
+  }
+{%- endstyle -%}
+
+<section
+  class="flexi-testimonials--{{ sectionid }} {{ display_options }}"
+>
+    <div id="flexi-embed-banner" style="display: none !important;">
+        <p>Congrats on adding a Flexi section! 🎉 Go to <strong>App Embeds on the left hand side if the screen in theme settings to remove this banner</strong>. <a href="https://www.loom.com/embed/16e29856e42b44ca9f0dfb6729397024?sid=c05f56fa-df24-48de-b42a-66f88c9c22ae">Make sure "Flexi Sections" is enabled.</a></p>
+    </div>
+  <div class="flexi-blocks-wrapper--{{ sectionid }}">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when '@app' %}
+          {% style %}
+            @media only screen and (max-width: 768px) {
+                .flexi--app-block--{{ block.id }} {
+                    padding-right: 0.5em;
+                    padding-left: 0.5em;
+                }
+            }
+          {% endstyle %}
+          <div class="flexi--app-block--{{ block.id }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+            {% render block %}
+          </div>
+      {% endcase %}
+    {% endfor %}
+
+    <!-- Slider main container -->
+    <div class="swiper swiper-testimonial-card-{{ sectionid }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}">
+      <div class="swiper-top-{{ sectionid }}">
+        {% if heading != blank %}
+          <div class="swiper-top-heading-{{ sectionid }}">{{ heading }}</div>
+        {% endif %}
+
+        <!-- If we need navigation buttons -->
+        {% if hide_arrows == false %}
+          <div class="swiper-arrows-container">
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Additional required wrapper -->
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'testimonial-card' %}
+              <div
+                class="flexi--app-block--{{ block.id }} swiper-slide swiper-slide-card-{{ sectionid }} {% unless request.design_mode %}{% if animation and limit_animation %}fade-in{% else %}css-fade-in{% endif %}{% endunless %}"
+                {{ block.shopify_attributes }}
+              >
+                {% render 'flexi-testimonial-card', block: block %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Swiper JS -->
+
+<!-- Initialize Swiper -->
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelectorAll('.swiper-testimonial-card-{{ sectionid }}').forEach((swiperContainer) => {
+      const swiper = new Swiper(swiperContainer, {
+        slidesPerView: 'auto',
+        direction: 'horizontal',
+        grabCursor: true,
+        loop: true,
+        {% comment %} autoplay: {
+          delay: 2500,
+          disableOnInteraction: false,
+        }, {% endcomment %}
+        navigation: {
+          nextEl: swiperContainer.querySelector('.swiper-button-next'),
+          prevEl: swiperContainer.querySelector('.swiper-button-prev'),
+        },
+        spaceBetween: 12,
+        breakpoints: {
+          768: {
+            spaceBetween: 20,
+          },
+        },
+        on: {
+          init: function () {
+            adjustSlideHeights(this);
+          },
+          resize: function () {
+            adjustSlideHeights(this);
+          },
+        },
+      });
+    });
+
+    function adjustSlideHeights(swiper) {
+      let maxHeight = 0;
+      swiper.slides.forEach((slide) => {
+        const slideHeight = slide.offsetHeight;
+        if (slideHeight > maxHeight) {
+          maxHeight = slideHeight;
+        }
+      });
+      swiper.slides.forEach((slide) => {
+        slide.style.height = maxHeight + 'px';
+      });
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Flexi • Testimonials",
+  "class": "flexi-testimonials",
+  "settings": [
+    {
+      "type": "header",
+      "content": "HEADING"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading text",
+      "default": "What people say"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "min": 12,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading font size",
+      "default": 26
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "COLORS"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#F6F5F0"
+    },
+    {
+      "type": "header",
+      "content": "SLIDER SETTINGS"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow color",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_arrows",
+      "label": "Hide arrows",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "VISIBILITY"
+    },
+    {
+      "type": "select",
+      "id": "display_options",
+      "label": "Visible On",
+      "default": "bl-hide-none",
+      "options": [
+        {
+          "value": "bl-hide-none",
+          "label": "All Screens"
+        },
+        {
+          "value": "bl-hide-desktop",
+          "label": "Mobile"
+        },
+        {
+          "value": "bl-hide-mobile",
+          "label": "Desktop"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "SIZING"
+    },
+    {
+      "type": "range",
+      "id": "width",
+      "min": 320,
+      "max": 1440,
+      "step": 20,
+      "unit": "px",
+      "label": "Slider width",
+      "default": 1000,
+      "info": "Desktop only."
+    },
+    {
+      "type": "range",
+      "id": "card_width",
+      "min": 100,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Card width",
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "SPACING"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Top spacing",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Bottom spacing",
+      "default": 60
+    }
+  ],
+  "max_blocks": 16,
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "testimonial-card",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "header",
+          "content": "QUOTE ICON"
+        },
+        {
+          "type": "select",
+          "id": "quote_icon",
+          "label": "Quote icon",
+          "default": "rounded",
+          "options": [
+            {
+              "value": "block",
+              "label": "Block"
+            },
+            {
+              "value": "circle",
+              "label": "Circle"
+            },
+            {
+              "value": "normal",
+              "label": "Normal"
+            },
+            {
+              "value": "rounded",
+              "label": "Rounded"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon color",
+          "default": "#707170"
+        },
+        {
+          "type": "header",
+          "content": "REVIEW"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "description",
+          "label": "Review text",
+          "default": "“I’ve been using brand since 2012 because it’s the simplest, most straightforward way for me to get all of the benefits I could ever ask for.”"
+        },
+        {
+          "type": "range",
+          "id": "description_font_size",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Description font size",
+          "default": 16
+        },
+        {
+          "type": "color",
+          "id": "description_color",
+          "label": "Description color",
+          "default": "#000000"
+        },
+        {
+          "type": "header",
+          "content": "BIO IMAGE"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "header",
+          "content": "NAME"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "name",
+          "label": "Name text",
+          "default": "JOHN D., 08/09/2024"
+        },
+        {
+          "type": "range",
+          "id": "name_font_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Name font size",
+          "default": 16
+        },
+        {
+          "type": "color",
+          "id": "name_color",
+          "label": "Name color",
+          "default": "#000000"
+        },
+        {
+          "type": "header",
+          "content": "INFO"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "info",
+          "label": "Info",
+          "default": "From Canada"
+        },
+        {
+          "type": "range",
+          "id": "info_font_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Heading font size",
+          "default": 14
+        },
+        {
+          "type": "color",
+          "id": "info_color",
+          "label": "Heading color",
+          "default": "#707170"
+        },
+        {
+          "type": "header",
+          "content": "COLORS"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background color"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Flexi • Testimonials",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "testimonial-card"
+        },
+        {
+          "type": "testimonial-card"
+        },
+        {
+          "type": "testimonial-card"
+        },
+        {
+          "type": "testimonial-card"
+        },
+        {
+          "type": "testimonial-card"
+        },
+        {
+          "type": "testimonial-card"
+        },
+        {
+          "type": "testimonial-card"
+        },
+        {
+          "type": "testimonial-card"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
