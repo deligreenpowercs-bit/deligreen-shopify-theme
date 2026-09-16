@@ -1,0 +1,166 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{%- liquid
+  assign blockid = block.id
+  assign accent_color = block.settings.accent_color
+  assign horizontal_lockup = block.settings.horizontal_lockup
+  assign flex_direction = block.settings.flex_direction
+  assign center_align =  block.settings.center_align
+  assign first_image = block.settings.first_image
+  assign second_image = block.settings.second_image
+  assign third_image = block.settings.third_image
+-%}
+
+{% style %}
+/* DEFAULT STYLES */
+.flexi-icons-block {
+  display: flex; 
+  height: 100%; 
+  width: 100%;
+}
+.bl--block-wrapper--{{ blockid }} {
+  display: flex; 
+  flex-direction: {% if flex_direction %}column{% else %}row{% endif %}; 
+  gap: {{ block.settings.gap }}px;
+  width: fit-content;
+
+  border-radius: {{ block.settings.border_radius }}px;
+
+  {% if center_align %}justify-content: center;{% endif %}
+  
+}
+  
+{% if block.settings.flex_columns %}
+@media only screen and (max-width: 768px) {
+  .bl--block-wrapper--{{ blockid }} {
+    flex-direction: row !important;
+    /* flex-wrap: wrap; */
+    /* justify-content: space-between; */
+  }
+}
+{% else %}
+@media only screen and (max-width: 768px) {
+  .bl--block-wrapper--{{ blockid }} {
+    flex-direction: column !important;
+  }
+}
+{% endif %}
+
+.bl-icon-component-{{ blockid }} {
+  display: flex;
+  flex-direction:{% if horizontal_lockup %}row{% else %}column{% endif %};
+  gap: {% if horizontal_lockup %}8px{% else %}4px{% endif %};
+  align-items: start;
+  {% if center_align %}text-align: center;{% endif %}
+  {% if horizontal_lockup %}text-align: left;{% endif %}
+
+  background-color: {{ accent_color }};
+  border-radius: {{ block.settings.border_radius }}px;
+  padding:{% if accent_color != 'rgba(0,0,0,0)' %}12px{% else %}0px{% endif %};
+  width: {% if center_align %}fit-content{% else %}100%{% endif %};
+  {% if center_align %}margin: 0px auto;{% endif %}
+  {% if flex_direction %}width: 100%;{% else %}width: 300px;{% endif %}
+  max-width: 1080px;
+}
+@media only screen and (max-width: 768px) {
+  .bl-icon-component-{{ blockid }} {
+    width: 100%;
+  }
+}
+
+.bl-icon-holder-{{ blockid }} {
+  width:{% if horizontal_lockup %}{{ block.settings.icon_size }}px{% else %}100%{% endif %};
+  height: {{ block.settings.icon_size }}px;
+}
+
+.bl-icon-holder-{{ blockid }} img {
+  width: auto;
+  height: {{ block.settings.icon_size }}px;
+  object-fit: contain;
+}
+
+.bl-text-holder-{{ blockid }} {
+  {% if center_align %}text-align: center;{% else %}text-align: left;{% endif %}
+  {% if horizontal_lockup %}text-align: left;{% endif %}
+  width: 100%;
+}
+
+.bl-icon-title-{{ blockid }} {
+  font-size: {{ block.settings.title_font_size }}px;    
+  margin: 2px 0px 0px 0px;
+  line-height: normal;
+  width: 100%;
+  color: {{ block.settings.font_color }};
+}
+
+.bl-icon-description-{{ blockid }} {
+  width: 100%;
+}
+
+.bl-icon-description-{{ blockid }} p  {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%; /* This will make the font size the same as the parent element */
+    vertical-align: baseline;
+    color: inherit;
+    background: none;
+    text-decoration: none;
+    text-align: inherit;
+}
+
+{% endstyle %}
+
+<div
+  class="flexi-icons-block"
+  style="{% if center_align %}justify-content: center;{% endif %} padding-top: {{ block.settings.top_padding }}px; padding-bottom: {{ block.settings.bottom_padding }}px;"
+>
+  <div class="bl--block-wrapper--{{ blockid }}">
+
+    {% if block.settings.first_subheading != blank %}
+      <div class="bl-icon-component-{{ blockid }}">
+        <div class="bl-icon-holder-{{ blockid }}">
+          {% if first_image != blank %}
+            {{ first_image | image_url: width: 600 | image_tag: widths: '200, 300, 400' }}
+          {% else %}
+              <i class="fa-solid {{ block.settings.first_icon }}" style="font-size: {{ block.settings.icon_size }}px; color: {{ block.settings.icon_color }};"></i>
+          {% endif %}
+        </div>
+        <div class="bl-text-holder-{{ blockid }}">
+          <h3 class="bl-icon-title-{{ blockid }}">{{ block.settings.first_subheading }}</h3>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.second_subheading != blank %}
+      <div id="flexi-icon-{{ block.id }}" class="bl-icon-component-{{ blockid }}">
+        <div class="bl-icon-holder-{{ blockid }}">
+          {% if second_image != blank %}
+            {{ second_image | image_url: width: 600 | image_tag: widths: '200, 300, 400' }}
+          {% else %}
+            <i class="fa-solid {{ block.settings.second_icon }}" style="font-size: {{ block.settings.icon_size }}px; color: {{ block.settings.icon_color }};"></i>
+          {% endif %}
+        </div>
+        <div class="bl-text-holder-{{ blockid }}">
+          <h3 class="bl-icon-title-{{ blockid }}">{{ block.settings.second_subheading }}</h3>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.third_subheading != blank %}
+      <div id="flexi-icon-{{ block.id }}" class="bl-icon-component-{{ blockid }}">
+        <div class="bl-icon-holder-{{ blockid }}">
+          {% if third_image != blank %}
+            {{ third_image | image_url: width: 600 | image_tag: widths: '200, 300, 400' }}
+          {% else %}
+            <i class="fa-solid {{ block.settings.third_icon }}" style="font-size: {{ block.settings.icon_size }}px; color: {{ block.settings.icon_color }};"></i>
+          {% endif %}
+        </div>
+        <div class="bl-text-holder-{{ blockid }}">
+          <h3 class="bl-icon-title-{{ blockid }}">{{ block.settings.third_subheading }}</h3>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</div> 

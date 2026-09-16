@@ -1,0 +1,29 @@
+{%- liquid
+    assign blockid = block.id
+  
+    assign mobile_top_padding = block.settings.padding_top | times: 0.6 | round
+    assign mobile_bottom_padding = block.settings.padding_bottom | times: 0.6 | round
+  -%}
+  
+  {%- style -%}
+  .flexi-html-block-{{ blockid }} {
+    display: flex; 
+    height: 100%; 
+    width: 100%;  
+    justify-content: start;
+  
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+  }
+  
+  @media only screen and (max-width: 768px) {
+      .flexi-html-block-{{ blockid }} {
+          padding-top: {{ mobile_top_padding }}px;
+          padding-bottom: {{ mobile_bottom_padding }}px;
+      }
+  }
+  {%- endstyle -%}
+  
+  <div class="flexi-html-block flexi-html-block-{{ blockid }} {{ block.settings.display_options }}">
+      {{ block.settings.html_code }}
+  </div>

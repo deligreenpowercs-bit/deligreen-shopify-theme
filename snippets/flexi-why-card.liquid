@@ -1,0 +1,155 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+{%- liquid
+    assign blockid = block.id
+
+    assign icon_image = block.settings.icon_image
+
+    assign scaled_font_size = block.settings.font_size | times: 0.95 | round
+
+    assign background_color = block.settings.background_color
+
+    assign json_data = shop.metafields.flexi.flexistyling.value
+    assign borderRadius = json_data.borderRadius
+    assign borderThickness = json_data.borderThickness
+
+    if json_data == blank
+      assign borderRadius = 8
+      assign borderThickness = 1
+    endif
+-%}
+
+{% style %}
+
+.flexi-how-it-works-block-{{ blockid }} {
+    width: 100%;
+} 
+
+@media only screen and (max-width: 768px) {
+    .flexi-how-it-works-block-{{ blockid }} {
+        width: 100%;
+    }
+}
+
+.flexi-card-wrapper--{{ blockid }} {
+    width: 100%;
+}
+
+.flexi-text,
+.flexi-text p {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: baseline;
+    background: none;
+    text-decoration: none;
+    text-align: inherit;
+}
+
+.how-it-works-item-{{ blockid }} {
+    text-align: {{ block.settings.text_align }};
+    border-radius: {{ borderRadius }}px;
+
+    {% if block.settings.show_border %}
+        border-width: {{ borderThickness }};
+        border-style: solid;
+        padding: 12px;
+        border-color: {{ block.settings.line_color }};
+    {% endif %}
+
+    {% if background_color != blank and background_color != 'rgba(0,0,0,0)' %}
+        background-color: {{ background_color }};
+        padding: 12px;
+    {% endif %}
+}
+
+.title-{{ blockid }} {
+    color: {{ block.settings.font_color }};
+    font-size: {{ block.settings.font_size }}px;
+}
+
+@media only screen and (max-width: 768px) {
+    .title-{{ blockid }} {
+        font-size: {{ scaled_font_size }}px;
+    }
+}
+
+.description-{{ blockid }},
+.description-{{ blockid }} p {
+    color: {{ block.settings.font_color }};
+    font-size: {{ block.settings.description_font_size }}px;
+    line-height: 1.3em;
+}
+
+.flexi-divider-{{ blockid }} {
+    display: block !important;
+    height: {{ block.settings.line_thickness }}px;
+    background: black;
+    {% if block.settings.line_full %}width: 100%;{% else %}width: 32px;{% endif %}
+
+    background-color: {{ block.settings.line_color }};
+    border-radius: {{ borderRadius }}px;
+}
+
+.how-it-works-item-{{ blockid }} .line-above {
+    padding-bottom: 12px;
+}
+.how-it-works-item-{{ blockid }} .line-below{
+    padding: 6px 0px;
+}
+
+
+.flexi-icon-holder-{{ blockid }} {
+  width: 100%;
+  height: {{ block.settings.icon_size }}px;
+  text-align: {{ block.settings.text_align }};
+  padding-bottom: 0.5em;
+}
+
+.flexi-icon-holder-{{ blockid }} img {
+  width: auto;
+  height: {{ block.settings.icon_size }}px;
+  object-fit: contain;
+}
+{% endstyle %}
+
+{% capture line %}
+    <span class="flexi-divider-{{ blockid }}"></span>
+{% endcapture %}
+
+
+<div 
+    class="flexi-how-it-works-block-{{ blockid }}"
+  >
+    <div class="flexi-card-wrapper--{{ blockid }}">
+        <div class="how-it-works-item-{{ blockid }}">
+
+            {% if block.settings.hide_icon == false %}
+                <div class="flexi-icon-holder-{{ blockid }}">
+                    {% if icon_image != blank %}
+                        {{ icon_image | image_url: width: 600 | image_tag: widths: '200, 300, 400' }}
+                    {% else %}
+                        <i class="fa-solid {{ block.settings.svg_icon }}" style="font-size: {{ block.settings.icon_size }}px; color: {{ block.settings.icon_color }};"></i>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if block.settings.show_line == 'above' %}
+                <div class="line-above">
+                    {{ line }}
+                </div>
+            {% endif %}
+            {% if block.settings.title %}
+                <h4 class="title-{{ blockid }} flexi-text">{{ block.settings.title }}</h4>
+            {% endif %}
+            {% if block.settings.show_line == 'below' %}
+                <div class="line-below">
+                    {{ line }}
+                </div>
+            {% endif %}
+            {% if block.settings.description %}
+                <span class="description-{{ blockid }} flexi-text"><p>{{ block.settings.description }}</p></span>
+            {% endif %}
+        </div>
+    </div>
+</div>

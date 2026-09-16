@@ -1,0 +1,24 @@
+{%- liquid
+    assign blockid = block.id
+    assign display_none = block.settings.display_none
+  -%}
+
+{% style %}
+.flexi-divider-block {
+  display: flex; 
+  height: 100%; 
+  width: 100%;
+}
+.bl-divider {
+    display: block;
+    height: 2px;
+    background: black;
+    width: 100%;
+}
+{% endstyle %}
+
+<div class="flexi-divider-block {{ block.settings.display_options }}" style="justify-content: {{ block.settings.justify_content }}; padding-top: {{ block.settings.padding_top }}px; padding-bottom: {{ block.settings.padding_bottom }}px;">
+    <div class="bl--block-wrapper--{{ blockid }}" style="text-align: {{ block.settings.text_align }}; width: 100%; max-width: {{ block.settings.max_width }}px;">
+            <span class="bl-divider" style="{% if display_none %}display: none !important;{% endif %} background-color: {{ block.settings.color }}; height: {{ block.settings.divider_height }}px; border-radius: {{ block.settings.border_radius }}px;">
+    </div>
+</div>

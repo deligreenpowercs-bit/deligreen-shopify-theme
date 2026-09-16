@@ -1,0 +1,115 @@
+<!-- /snippets/flexi-benefit.liquid -->
+<!-- Brandon Landgraff - Flexi Studios -->
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+>
+
+{%- liquid
+  assign blockid = block.id
+
+  assign icon_image = block.settings.icon_image
+  assign size = block.settings.size
+  assign icon_size = block.settings.icon_size
+  assign scaled_font_size = block.settings.size | times: 0.95 | round
+  assign font_color = block.settings.font_color
+  assign hide_icon = block.settings.hide_icon
+  assign icon_color = block.settings.icon_color
+  assign svg_icon = block.settings.svg_icon
+  assign title = block.settings.title
+
+  if section.index <= 3
+    assign loading_strategy = 'eager'
+    assign fetch_priority = 'high'
+  else
+    assign loading_strategy = 'lazy'
+    assign fetch_priority = 'auto'
+  endif
+
+  assign widths = '165, 360, 535, 750, 1070, 1500'
+
+
+  assign img_alt = image.alt | escape
+-%}
+{%- capture sizes -%}
+  (min-width: 1200px) calc((1200px - 100px) / 2),
+  (min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)
+{%- endcapture -%}
+
+{% style %}
+  .flexi-card-wrapper--{{ blockid }} {
+      width: 100%;
+  }
+  .flexi-text,
+  .flexi-text p {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      vertical-align: baseline;
+      background: none;
+      text-decoration: none;
+      text-align: inherit;
+  }
+  .brand-benefits-item-{{ blockid }} {
+        display: flex;
+        gap: 8px;
+        text-align: left;
+        align-items: center;
+  }
+  .title-{{ blockid }} {
+      color: {{ font_color }};
+      font-size: {{ size }}px;
+  }
+
+  @media only screen and (max-width: 768px) {
+      .title-{{ blockid }} {
+          font-size: {{ scaled_font_size }}px;
+      }
+  }
+  .flexi-icon-holder-{{ blockid }} {
+    display: {{ hide_icon }};
+    width: {{ icon_size }}px;
+    height: auto;
+    text-align: left;
+  }
+  .flexi-icon-holder-{{ blockid }} img {
+    display: block;
+    width: {{ icon_size }}px;
+    height: auto;
+    object-fit: contain;
+  }
+  .flexi-icon-holder-{{ blockid }} i {
+    display: block;
+    font-size: {{ icon_size }}px; 
+    color: {{ icon_color }};
+  }
+{% endstyle %}
+
+<div
+  class="flexi-brand-benefits-block-{{ blockid }}"
+>
+  <div class="flexi-card-wrapper--{{ blockid }}">
+    <div class="brand-benefits-item-{{ blockid }}">
+      <div class="flexi-icon-holder-{{ blockid }}">
+        {% if icon_image != blank %}
+          {{ icon_image | image_url: width: 100 | image_tag: 
+            sizes: sizes, 
+            widths: widths, 
+            loading: loading_strategy, 
+            fetchpriority: fetch_priority,
+            alt: img_alt
+          }}
+        {% else %}
+          <i
+            class="fa-solid {{ svg_icon }}"
+          ></i>
+        {% endif %}
+      </div>
+      <h4 class="title-{{ blockid }} flexi-text">{{ title }}</h4>
+    </div>
+  </div>
+</div>

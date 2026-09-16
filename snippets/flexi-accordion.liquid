@@ -1,0 +1,254 @@
+{%- liquid
+    assign blockid = block.id
+  -%}
+  
+  {%- style -%}
+  /* DEFAULT STYLES */
+  .flexi-accordion-block {
+    display: flex; 
+    height: 100%; 
+    width: 100%;
+  }
+  .bl-accordion-wrapper {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .accordion {
+    margin: 0px;
+    box-sizing: border-box;
+    width: 100%;
+    border: none;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item {
+    background-color: transparent;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in 0.3s;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item.active {
+    background-color: transparent;
+    transition: background-color 0.2s ease-in 0s;
+  } 
+  .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-header {
+    color: {{ block.settings.icon_color }};
+    transition: background-color 0.2s ease-in 0s, color 0.2s ease-in 0.2s;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-header h4:before, .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-header h4:after {
+    background-color: {{ block.settings.icon_color }};
+    transition: background-color 0.2s ease-in 0.2s, transform 0.2s ease 0.1s;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-header h4:after {
+    transform: rotate(90deg);
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-body {
+    max-height: 900px;
+    padding: 0 15px 15px;
+    transition: max-height 0.3s ease-in 0s, padding 0.2s ease-in 0s;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-body p {
+    font-size: 14px;
+    color: {{ block.settings.font_color }};
+    line-height: 1.5em;
+    opacity: 1;
+    transition: opacity 0.2s ease-in 0.2s;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-body p {
+    font-size: 14px;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-header {
+    color: white;
+    padding: {{ block.settings.header_padding }}px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-out 0.3s, color 0.2s ease-out 0s;
+    border-top: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-header h4 {
+    text-align: left;
+    position: relative;
+    font-weight: 500;
+    color: {{ block.settings.font_color }};
+    font-size: {{ block.settings.font_size }}px;
+    margin: 0;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-header h4:before, .bl--block-wrapper--{{ blockid }} .accordion-header h4:after {
+    content: "";
+    position: absolute;
+    background-color: {{ block.settings.icon_color }};
+    transition: background-color 0.2s ease-in 0s, transform 0.2s ease 0s;
+  }
+  
+  .bl--block-wrapper--{{ blockid }} .accordion-body {
+    max-height: 0;
+    padding: 0 15px;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out 0s, padding 0.1s ease-out 0.2s;
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-item:last-child .accordion-body {
+    border-bottom: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+  }
+  .bl--block-wrapper--{{ blockid }} .accordion-body h4 {
+    font-size: 14px;
+    line-height: 1.5em;
+    margin: 0;
+    transition: opacity 0.2s ease-in 0s;
+    color: {{ block.settings.font_color }} !important;
+  }
+  .bl--block-wrapper--{{ blockid }} p,
+  .bl--block-wrapper--{{ blockid }} h1,
+  .bl--block-wrapper--{{ blockid }} h2,
+  .bl--block-wrapper--{{ blockid }} h3,
+  .bl--block-wrapper--{{ blockid }} h4,
+  .bl--block-wrapper--{{ blockid }} h5,
+  .bl--block-wrapper--{{ blockid }} ul,
+  .bl--block-wrapper--{{ blockid }} ol,
+  .bl--block-wrapper--{{ blockid }} li {
+    text-align: left;
+    line-height: 1.5em;
+    color: {{ block.settings.font_color }} !important;
+  }
+  .bl--block-wrapper--{{ blockid }} p {
+    font-size: 14px;   
+  }
+  
+  /* Dynamic styles based on block settings */
+  {% if block.settings.use_chevron %}
+    /* Styles for chevron */
+    .bl--block-wrapper--{{ blockid }} .accordion-header h4:after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 2px;
+      transform: translateY(-50%) rotate(45deg);
+      width: 7px;
+      height: 7px;
+      border: solid {{ block.settings.icon_color }};
+      background-color: transparent;
+      border-width: 0 1px 1px 0;
+      transition: transform 0.3s ease-out;
+    }
+    .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-header h4:after {
+      background-color: transparent;
+      transform: translateY(-50%) rotate(-135deg);
+    }
+  {% else %}
+    /* Styles for plus sign (using your original code) */
+    .bl--block-wrapper--{{ blockid }} .accordion-header h4:before,
+    .bl--block-wrapper--{{ blockid }} .accordion-header h4:after {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 10px;
+      background-color: {{ block.settings.icon_color }};
+      transition: transform 0.2s ease-out;
+    }
+    .bl--block-wrapper--{{ blockid }} .accordion-header h4:before {
+      transform: translateY(-50%) rotate(90deg);
+      top: 50%;
+      right: 4px;
+    }
+    .bl--block-wrapper--{{ blockid }} .accordion-header h4:after {
+      transform: translateY(-50%);
+      top: 50%;
+      right: 4px;
+    }
+    .bl--block-wrapper--{{ blockid }} .accordion-item.active .accordion-header h4:after {
+      transform: translateY(-50%) rotate(90deg);
+    }
+  {% endif %}
+  
+  {%- endstyle -%}
+  
+  <div 
+    class="flexi-accordion-block" style="justify-content: center; padding-top: {{ block.settings.padding_top }}px; padding-bottom: {{ block.settings.padding_bottom }}px;">
+    <div class="bl--block-wrapper--{{ blockid }}" style="width: 100%;">
+  
+      <div class="bl-accordion-wrapper">
+        <div class="accordion">
+    
+          {% comment %} ACCORDION 1 {% endcomment %}
+          {% if block.settings.accordion_1_text != blank %}
+            <div class="accordion-header {% if block.settings.open %}active{% endif %}">
+              <div class="accordion-header">
+                <div class="bl-subheading-component">
+                  <h4 class="bl-header">{{ block.settings.accordion_1_text }}</h4>
+                </div>
+              </div>
+              <div class="accordion-body">
+                <div class="bl-description-component">
+                  <span class="bl-description">{% if block.settings.product_description %}{{ product.description }}{% else %}{{ block.settings.accordion_1_description }}{% endif %}</span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+    
+          {% comment %} ACCORDION 2 {% endcomment %}
+          {% if block.settings.accordion_2_text != blank %}
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <div class="bl-subheading-component">
+                  <h4 class="bl-header">{{ block.settings.accordion_2_text }}</h4>
+                </div>
+              </div>
+              <div class="accordion-body">
+                <div class="bl-description-component">
+                  <span class="bl-description">{{ block.settings.accordion_2_description }}</span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+    
+          {% comment %} ACCORDION 3 {% endcomment %}
+          {% if block.settings.accordion_3_text != blank %}
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <div class="bl-subheading-component">
+                  <h4 class="bl-header">{{ block.settings.accordion_3_text }}</h4>
+                </div>
+              </div>
+              <div class="accordion-body">
+                <div class="bl-description-component">
+                  <span class="bl-description">{{ block.settings.accordion_3_description }}</span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+    
+          {% comment %} ACCORDION 4 {% endcomment %}
+          {% if block.settings.accordion_4_text != blank %}
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <div class="bl-subheading-component">
+                  <h4 class="bl-header">{{ block.settings.accordion_4_text }}</h4>
+                </div>
+              </div>
+              <div class="accordion-body">
+                <div class="bl-description-component">
+                  <span class="bl-description">{{ block.settings.accordion_4_description }}</span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+    
+          {% comment %} ACCORDION 5 {% endcomment %}
+          {% if block.settings.accordion_5_text != blank %}
+            <div class="accordion-item">
+              <div class="accordion-header">
+                <div class="bl-subheading-component">
+                  <h4 class="bl-header">{{ block.settings.accordion_5_text }}</h4>
+                </div>
+              </div>
+              <div class="accordion-body">
+                <div class="bl-description-component">
+                  <span class="bl-description">{{ block.settings.accordion_5_description }}</span>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          
+        </div>
+      </div>
+    </div>
+  </div>

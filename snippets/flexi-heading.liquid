@@ -1,0 +1,44 @@
+{%- liquid
+    assign blockid = block.id
+
+    assign mb_font_size = block.settings.mb_font_size
+    assign scaled_font_size = block.settings.font_size | times: mb_font_size | round
+    assign line_height = block.settings.line_height
+    assign letter_spacing  = block.settings.letter_spacing
+  -%}
+
+{% style %}
+.flexi-heading-block {
+  display: flex; 
+  height: 100%; 
+  width: 100%;
+}
+.flexi-header {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%; /* This will make the font size the same as the parent element */
+    vertical-align: baseline;
+    color: inherit;
+    background: none;
+    text-decoration: none;
+    text-align: inherit;
+}
+#flexi-header-{{ blockid }} {
+  font-size: {{ block.settings.font_size }}px;
+  color: {{ block.settings.font_color }};
+  line-height: {{ line_height | times: 0.01 | plus: 1 }}em;
+  letter-spacing: {{ letter_spacing | times: 0.01 }}rem;
+}
+@media (max-width: 768px) {
+  #flexi-header-{{ blockid }} {
+    font-size: {{ scaled_font_size }}px;
+  }
+}
+{% endstyle %}
+
+<div class="flexi-heading-block {{ block.settings.display_options }}" style="justify-content: {{ block.settings.justify_content }}; padding-top: {{ block.settings.padding_top }}px; padding-bottom: {{ block.settings.padding_bottom }}px;">
+    <div class="bl--block-wrapper--{{ blockid }}" style="text-align: {{ block.settings.text_align }}; width: 100%; max-width: {{ block.settings.max_width }}px;">
+        <h2 id="flexi-header-{{ blockid }}" class="flexi-header">{{ block.settings.heading }}</h2>
+    </div>
+</div>

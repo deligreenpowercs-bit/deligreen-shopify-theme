@@ -1,0 +1,199 @@
+{%- liquid
+  assign blockid = block.id
+  assign flex_direction = block.settings.flex_direction
+  assign full_width = block.settings.full_width
+
+  assign btn_size = block.settings.btn_size
+
+  assign bold_1 = block.settings.bold_1
+  assign bold_2 = block.settings.bold_2
+  assign bold_3 = block.settings.bold_3
+
+  assign btn_1_style = block.settings.btn_1_style
+  assign btn_2_style = block.settings.btn_2_style
+  assign btn_3_style = block.settings.btn_3_style
+
+  assign json_data = shop.metafields.flexi.flexistyling.value
+  assign primaryColor = json_data.primaryColorHex
+  assign secondaryColor = json_data.secondaryColorHex
+  assign borderRadius = json_data.borderRadius
+  assign borderThickness = json_data.borderThickness
+
+  if json_data == blank
+    assign primaryColor = '#1946F3'
+    assign secondaryColor = '#B4E71B'
+    assign borderRadius = 8
+    assign borderThickness = 1
+  endif
+-%}
+
+{% style %}
+/* DEFAULT STYLES */
+.flexi-buttons-block {
+display: flex; 
+height: 100%; 
+width: 100%;
+}
+.bl-button-{{ blockid }} {
+{% if full_width %}width: 100%;{% endif %} 
+color: {{ block.settings.font_color }}; 
+background-color: {{ primaryColor }}; 
+border: solid;
+border-color: {{ block.settings.border_color }}; 
+border-width: {{ borderThickness }}px;
+border-radius: {{ borderRadius }}px;
+}
+
+.bl-btn-{{ blockid }} {
+display: inline-block;
+text-decoration: none;
+{% case btn_size %}
+  {% when '8px 20px' %}
+    padding: 8px 20px;
+  {% when '10px 24px' %}
+    padding: 10px 24px;
+  {% when '12px 36px' %}
+    padding: 12px 36px;
+{% endcase %}
+transition: opacity 0.3s ease;   
+text-align: center; 
+line-height: normal;
+}
+.bl-btn-{{ blockid }}:hover {
+opacity: 0.7;
+}
+
+/* BUTTON STYLES */
+.bl-button-a-{{ blockid }} {
+{% case btn_1_style %}
+  {% when 'primary' %}
+    background-color: {{ primaryColor }}; 
+    color: {{ block.settings.font_color }}; 
+    border-color: transparent;
+  {% when 'secondary' %}
+    background-color: {{ secondaryColor }}; 
+    color: {{ block.settings.font_color }}; 
+    border-color: transparent;
+  {% when 'light-outline' %}
+    background-color: transparent;
+    color: white;
+    border-color: white;
+  {% when 'dark-outline' %}
+    background-color: transparent;
+    color: black;
+    border-color: black;
+  {% when 'underline' %}
+    color: {{ primaryColor }} !important; 
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0px;
+    text-decoration: underline;
+  {% when 'light-underline' %}
+    color: white !important; 
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0px;
+    text-decoration: underline;
+{% endcase %}
+{% if bold_1 %}font-weight: bold;{% endif %}
+}
+
+.bl-button-b-{{ blockid }} {
+{% case btn_2_style %}
+  {% when 'primary' %}
+    background-color: {{ primaryColor }}; 
+    color: {{ block.settings.font_color }}; 
+    border-color: transparent;
+  {% when 'secondary' %}
+    background-color: {{ secondaryColor }}; 
+    color: {{ block.settings.font_color }}; 
+    border-color: {{ block.settings.border_color }}; 
+  {% when 'light-outline' %}
+    background-color: transparent;
+    color: white;
+    border-color: white;
+  {% when 'dark-outline' %}
+    background-color: transparent;
+    color: black;
+    border-color: black;
+  {% when 'underline' %}
+    color: {{ primaryColor }} !important; 
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0px;
+    text-decoration: underline;
+  {% when 'light-underline' %}
+    color: white !important; 
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0px;
+    text-decoration: underline;
+{% endcase %}
+{% if bold_2 %}font-weight: bold;{% endif %}
+}
+
+.bl-button-c-{{ blockid }} {
+{% case btn_3_style %}
+  {% when 'primary' %}
+    background-color: {{ primaryColor }}; 
+    color: {{ block.settings.font_color }}; 
+    border-color: transparent;
+  {% when 'secondary' %}
+    background-color: {{ secondaryColor }}; 
+    color: {{ block.settings.font_color }}; 
+    border-color: {{ block.settings.border_color }}; 
+  {% when 'light-outline' %}
+    background-color: transparent;
+    color: white;
+    border-color: white;
+  {% when 'dark-outline' %}
+    background-color: transparent;
+    color: black;
+    border-color: black;
+  {% when 'underline' %}
+    color: {{ primaryColor }} !important; 
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0px;
+    text-decoration: underline;
+  {% when 'light-underline' %}
+    color: white !important; 
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0px;
+    text-decoration: underline;
+{% endcase %}
+{% if bold_3 %}font-weight: bold;{% endif %}
+}
+
+{% endstyle %}
+
+<div class="flexi-buttons-block {{ block.settings.display_options }}" style="justify-content: {{ block.settings.justify_content }}; padding-top: {{ block.settings.top_padding }}px; padding-bottom: {{ block.settings.bottom_padding }}px;">
+  <div class="bl--block-wrapper--{{ blockid }}" style="display: flex; flex-direction: {% if flex_direction %}column{% else %}row{% endif %}; gap: {{ block.settings.gap }}px; text-align: {{ block.settings.justify_content }}; {% if full_width %}width: 100%;{% endif %} border-radius: {{ block.settings.border_radius }}px; align-items: center;">
+
+      {% if block.settings.first_button_text != blank %}
+          <div class="bl-btn-component-{{ blockid }}" style="{% if full_width %}width: 100%;{% endif %}">
+              <a href="{{ block.settings.first_button_url }}" class="bl-btn-{{ blockid }} bl-button-{{ blockid }} bl-button-a-{{ blockid }}">
+                  {{ block.settings.first_button_text }}
+              </a>  
+          </div>
+      {% endif %}
+
+      {% if block.settings.second_button_text != blank %}
+          <div class="bl-btn-component-{{ blockid }}" style="{% if full_width %}width: 100%;{% endif %}">
+              <a href="{{ block.settings.second_button_url }}" class="bl-btn-{{ blockid }} bl-button-{{ blockid }} bl-button-b-{{ blockid }}">
+                  {{ block.settings.second_button_text }}
+              </a>
+          </div>
+      {% endif %}
+      
+      {% if block.settings.third_button_text != blank %}
+        <div class="bl-btn-component-{{ blockid }}" style="{% if full_width %}width: 100%;{% endif %}">
+            <a href="{{ block.settings.third_button_url }}" class="bl-btn-{{ blockid }} bl-button-{{ blockid }} bl-button-c-{{ blockid }}">
+                {{ block.settings.third_button_text }}
+            </a>
+        </div>
+    {% endif %}
+
+  </div>
+</div>

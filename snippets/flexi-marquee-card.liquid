@@ -1,0 +1,115 @@
+{%- liquid
+    assign direction = block.settings.direction
+    assign gap = block.settings.gap
+    assign max_height = block.settings.max_height
+    assign text = block.settings.text 
+    assign image = block.settings.image
+    assign link = block.settings.link
+    assign link_color = block.settings.link_color
+    assign font_size  = block.settings.font_size 
+    assign font_color =  block.settings.font_color
+    assign scaled_font_size = block.settings.font_size | times: 0.9 | round
+
+    if section.index <= 3
+        assign loading_strategy = 'eager'
+        assign fetch_priority = 'high'
+      else
+        assign loading_strategy = 'lazy'
+        assign fetch_priority = 'auto'
+      endif
+    
+      assign widths = '165, 360, 535, 750, 1070, 1500'
+    
+    
+      assign img_alt = image.alt | escape
+    -%}
+    {%- capture sizes -%}
+      (min-width: 1200px) calc((1200px - 100px) / 2),
+      (min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)
+    {%- endcapture -%}
+{% style %}
+    #marquee-list {
+      display: unset;
+    }
+    .marquee-grid-{{ block.id }} {
+      display: grid;
+      grid-template-{{ direction }}: auto 1fr;
+      justify-content: center;
+      align-items: center;
+      gap: {{ gap }}px;
+    }
+    .flexi-image-{{ block.id }} {
+        padding-top: 0px; 
+        padding-bottom: 0px; 
+        width: 100%;
+        height: {{ max_height }}px;
+        max-height: {{ max_height }}px;
+    }
+    .flexi-image-{{ block.id }} img {
+        display: block;
+        width: auto;
+        height: {{ max_height }}px;
+        margin: auto;
+        max-height: {{ max_height }}px;
+    }
+    .flexi-image-{{ block.id }} a {
+        display: block;
+        position: relative;
+        width: 100%;
+        height: auto;
+        margin: 0px;
+    }
+    /* TEXT */
+    #marquee_text-{{ block.id }} {
+        text-align: left;
+        font-size: {{ font_size }}px;
+        color: {{ font_color }};
+        line-height: normal;
+        padding: 0px;
+        margin: 0px;
+    }
+    @media only screen and (max-width: 768px) {
+        #marquee_text-{{ block.id }} {
+            font-size: {{ scaled_font_size }}px;
+        }
+    }
+    #marquee_text-{{ block.id }} a {
+        color: {{ link_color }};
+    }
+{% endstyle %}
+<li id="marquee-list">
+  <div class="marquee-grid-{{ block.id }}">
+    {% if image != blank %}
+      <div id="flexi-image" class="flexi-image-{{ block.id }}">
+        {% if link != blank %}
+            <a href="{{ link }}">
+                {{ image | image_url: width: 512 | image_tag: 
+                    sizes: sizes, 
+                    widths: widths, 
+                    loading: loading_strategy, 
+                    fetchpriority: fetch_priority,
+                    alt: img_alt 
+                }}
+            </a>
+        {% else %}
+            {{ image | image_url: width: 512 | image_tag: 
+                sizes: sizes, 
+                widths: widths, 
+                loading: loading_strategy, 
+                fetchpriority: fetch_priority,
+                alt: img_alt 
+            }}
+        {% endif %}
+      </div>
+    {% endif %}
+    <span id="marquee_text-{{ block.id }}">
+      {% if link != blank %}
+        <a href="{{ link }}">
+          {{ text }}
+        </a>
+      {% else %}
+        {{ text }}
+      {% endif %}
+    </span>
+  </div>
+</li>

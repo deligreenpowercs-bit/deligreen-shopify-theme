@@ -1,0 +1,72 @@
+{%- liquid
+    assign blockid = block.id
+
+    assign scaled_text_size = block.settings.text_size | times: 0.9 | round
+    assign scaled_suffix_size = block.settings.suffix_size | times: 0.9 | round
+-%}
+
+{% style %}
+/* DEFAULT STYLES */
+.flexi-advanced-text-block-{{ blockid }} {
+  display: flex; 
+  height: 100%; 
+  width: 100%;
+  justify-content: {{ block.settings.justify_content }}; 
+  padding-top: {{ block.settings.top_padding }}px; 
+  padding-bottom: {{ block.settings.bottom_padding }}px; 
+  {% if block.settings.padding_horizontal %}margin: 0px 12px;{% endif %}
+}
+
+.bl-advanced-text-{{ blockid }} {
+    display: flex;
+    align-items: {{ block.settings.align_items }};
+    gap: 12px;
+}
+
+.bl-advanced-text-{{ blockid }} .bl-text {
+  display: block;
+  width: max-content; /* Adjust width based on content */
+  line-height: normal;
+  margin: 0px;
+  font-size: {{ block.settings.text_size }}px;
+  color: {{ block.settings.font_color }};
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.bl-advanced-text-{{ blockid }} .bl-suffix {
+  display: block;
+  line-height: normal;
+  margin: 0px;
+  font-size: {{ block.settings.suffix_size }}px;
+  color: {{ block.settings.suffix_color }};
+  max-width: {{ block.settings.max_width }}px;
+}
+
+@media (max-width: 768px) {
+    .bl-advanced-text-{{ blockid }} {
+        flex-direction: column;
+        gap: 4px;
+    }
+    .bl-advanced-text-{{ blockid }} .bl-text {
+        font-size: {{ scaled_text_size }}px;
+    }
+    .bl-advanced-text-{{ blockid }} .bl-suffix {
+        font-size: {{ scaled_suffix_size }}px;
+    }
+}
+{% endstyle %}
+
+
+
+<div class="flexi-advanced-text-block flexi-advanced-text-block-{{ blockid }} {{ block.settings.display_options }}">
+    <div class="bl--block-wrapper--{{ blockid }}">
+        
+        {% if block.settings.text %}
+            <div class="bl-advanced-text-{{ blockid }}">
+                <p class="bl-text">{{ block.settings.text }}</p>
+                <p class="bl-suffix">{{ block.settings.suffix }}</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
