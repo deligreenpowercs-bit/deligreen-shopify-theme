@@ -5,6 +5,7 @@
 >
   {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
   {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
+  {{ 'product-specifications.css' | asset_url | stylesheet_tag }}
   {{ 'component-price.css' | asset_url | stylesheet_tag }}
   {{ 'component-slider.css' | asset_url | stylesheet_tag }}
   {{ 'component-rating.css' | asset_url | stylesheet_tag }}
@@ -489,6 +490,8 @@
                   section_id: section.id,
                   show_pickup_availability: true
                 -%}
+              {%- when 'product_specifications' -%}
+                {%- render 'product-specifications', product: product, block: block, section: section -%}
               {%- when 'rating' -%}
                 {%- if product.metafields.reviews.rating.value != blank -%}
                   <div class="rating-wrapper">
@@ -970,6 +973,53 @@
       "type": "description",
       "name": "t:sections.main-product.blocks.description.name",
       "limit": 1
+    },
+    {
+      "type": "product_specifications",
+      "name": "Product Specifications",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Product Specifications"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_battery",
+          "label": "Show Battery Specifications",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_bms_protection",
+          "label": "Show BMS & Protection",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_communication",
+          "label": "Show Communication & Compatibility",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_physical",
+          "label": "Show Physical Specifications",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "spacing_top",
+          "label": "Space above",
+          "min": 0,
+          "max": 40,
+          "step": 4,
+          "unit": "px",
+          "default": 20
+        }
+      ]
     },
     {
       "type": "share",
