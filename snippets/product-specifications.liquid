@@ -1,0 +1,113 @@
+{%- comment -%}
+  Render populated product metafields in a single, closed-by-default accordion.
+  Each group is captured before its heading is output so empty groups stay hidden.
+{%- endcomment -%}
+{%- capture specification_groups -%}
+  {%- for group_number in (1..4) -%}
+    {%- liquid
+      assign show_group = false
+      case group_number
+        when 1
+          assign show_group = block.settings.show_battery
+          assign group_key = 'battery'
+          assign fields = 'model|chemistry|nominal_voltage|capacity_ah|energy_kwh|cell_brand|cell_model|cell_grade|tested_capacity_ah|continuous_charge_current_a|continuous_discharge_current_a|max_discharge_current_a|charge_temperature|discharge_temperature' | split: '|'
+        when 2
+          assign show_group = block.settings.show_bms_protection
+          assign group_key = 'bms_protection'
+          assign fields = 'bms_model|bms_current_a|active_balance_a|heating|breaker_current_a|fire_protection' | split: '|'
+        when 3
+          assign show_group = block.settings.show_communication
+          assign group_key = 'communication_group'
+          assign fields = 'communication|communication_protocol|inverter_compatibility|parallel_units' | split: '|'
+        when 4
+          assign show_group = block.settings.show_physical
+          assign group_key = 'physical'
+          assign fields = 'length|width|height|weight|ip_rating|installation_type' | split: '|'
+      endcase
+    -%}
+    {%- if show_group -%}
+      {%- capture group_rows -%}
+        {%- for field in fields -%}
+          {%- liquid
+            assign specification = product.metafields.custom[field]
+            assign value = specification.value
+            assign has_value = false
+            if specification.type == 'dimension' or specification.type == 'weight'
+              if value.value != blank and value.unit != blank
+                assign has_value = true
+              endif
+            elsif specification.type == 'boolean'
+              if value == true or value == false
+                assign has_value = true
+              endif
+            elsif value != blank
+              assign has_value = true
+            endif
+            if has_value and specification.type == 'single_line_text_field'
+              assign normalized_value = value | strip | downcase
+              if normalized_value == '-' or normalized_value == 'n/a' or normalized_value == 'null' or normalized_value == 'blank'
+                assign has_value = false
+              endif
+            endif
+          -%}
+          {%- if has_value -%}
+            {%- assign label_key = 'products.specifications.' | append: field -%}
+            {%- assign unit = '' -%}
+            {%- case field -%}
+              {%- when 'nominal_voltage' -%}{%- assign unit = 'V' -%}
+              {%- when 'capacity_ah', 'tested_capacity_ah' -%}{%- assign unit = 'Ah' -%}
+              {%- when 'energy_kwh' -%}{%- assign unit = 'kWh' -%}
+              {%- when 'continuous_charge_current_a', 'continuous_discharge_current_a', 'max_discharge_current_a', 'bms_current_a', 'active_balance_a', 'breaker_current_a' -%}{%- assign unit = 'A' -%}
+            {%- endcase -%}
+            <div class="product-specifications__row">
+              <dt class="product-specifications__label">{{ label_key | t }}</dt>
+              <dd class="product-specifications__value">
+                {%- if specification.type == 'dimension' or specification.type == 'weight' -%}
+                  {{- value.value | escape }} {{ value.unit | escape -}}
+                {%- elsif field == 'heating' -%}
+                  {%- if value == true -%}{{ 'products.specifications.yes' | t }}{%- else -%}{{ 'products.specifications.no' | t }}{%- endif -%}
+                {%- elsif field == 'parallel_units' -%}
+                  {{- 'products.specifications.up_to_units' | t: units: value -}}
+                {%- elsif specification.type contains 'list.' -%}
+                  {%- assign list_value = value | join: ' / ' -%}
+                  {{- list_value | escape -}}
+                {%- else -%}
+                  {{- value | escape -}}{%- if unit != blank %} {{ unit }}{%- endif -%}
+                {%- endif -%}
+              </dd>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- assign group_rows = group_rows | strip -%}
+      {%- if group_rows != blank -%}
+        {%- assign group_title_key = 'products.specifications.' | append: group_key -%}
+        <section class="product-specifications__group">
+          <h3 class="product-specifications__group-title h5">{{ group_title_key | t }}</h3>
+          <dl class="product-specifications__rows">{{ group_rows }}</dl>
+        </section>
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign specification_groups = specification_groups | strip -%}
+{%- if specification_groups != blank -%}
+  <div class="product__accordion accordion product-specifications quick-add-hidden" style="--product-specifications-spacing: {{ block.settings.spacing_top }}px" {{ block.shopify_attributes }}>
+    <details id="ProductSpecifications-{{ block.id }}-{{ section.id }}">
+      <summary>
+        <span class="summary__title">
+          <span class="h4 accordion__title">
+            {%- if block.settings.heading != blank -%}
+              {{- block.settings.heading | escape -}}
+            {%- else -%}
+              {{- 'products.specifications.title' | t -}}
+            {%- endif -%}
+          </span>
+        </span>
+        <span class="product-specifications__toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="accordion__content product-specifications__content">{{ specification_groups }}</div>
+    </details>
+  </div>
+{%- endif -%}
