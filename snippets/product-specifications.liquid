@@ -31,50 +31,12 @@
           {%- liquid
             assign specification = product.metafields.custom[field]
             assign value = specification.value
-            assign has_value = false
-            if specification.type == 'dimension' or specification.type == 'weight'
-              if value.value != blank and value.unit != blank
-                assign has_value = true
-              endif
-            elsif specification.type == 'boolean'
-              if value == true or value == false
-                assign has_value = true
-              endif
-            elsif value != blank
-              assign has_value = true
-            endif
-            if has_value and specification.type == 'single_line_text_field'
-              assign normalized_value = value | strip | downcase
-              if normalized_value == '-' or normalized_value == 'n/a' or normalized_value == 'null' or normalized_value == 'blank'
-                assign has_value = false
-              endif
-            endif
           -%}
-          {%- if has_value -%}
+          {%- if value != blank -%}
             {%- assign label_key = 'products.specifications.' | append: field -%}
-            {%- assign unit = '' -%}
-            {%- case field -%}
-              {%- when 'nominal_voltage' -%}{%- assign unit = 'V' -%}
-              {%- when 'capacity_ah', 'tested_capacity_ah' -%}{%- assign unit = 'Ah' -%}
-              {%- when 'energy_kwh' -%}{%- assign unit = 'kWh' -%}
-              {%- when 'continuous_charge_current_a', 'continuous_discharge_current_a', 'max_discharge_current_a', 'bms_current_a', 'active_balance_a', 'breaker_current_a' -%}{%- assign unit = 'A' -%}
-            {%- endcase -%}
             <div class="product-specifications__row">
               <dt class="product-specifications__label">{{ label_key | t }}</dt>
-              <dd class="product-specifications__value">
-                {%- if specification.type == 'dimension' or specification.type == 'weight' -%}
-                  {{- value.value | escape }} {{ value.unit | escape -}}
-                {%- elsif field == 'heating' -%}
-                  {%- if value == true -%}{{ 'products.specifications.yes' | t }}{%- else -%}{{ 'products.specifications.no' | t }}{%- endif -%}
-                {%- elsif field == 'parallel_units' -%}
-                  {{- 'products.specifications.up_to_units' | t: units: value -}}
-                {%- elsif specification.type contains 'list.' -%}
-                  {%- assign list_value = value | join: ' / ' -%}
-                  {{- list_value | escape -}}
-                {%- else -%}
-                  {{- value | escape -}}{%- if unit != blank %} {{ unit }}{%- endif -%}
-                {%- endif -%}
-              </dd>
+              <dd class="product-specifications__value">{{ value | escape }}</dd>
             </div>
           {%- endif -%}
         {%- endfor -%}
