@@ -46,6 +46,44 @@
     .product-details__content > :last-child {
       margin-bottom: 0;
     }
+
+    .product-details__item + .product-details__item {
+      margin-top: 2.4rem;
+    }
+
+    .product-details__rich-text {
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .product-details__image {
+      margin-right: 0;
+      margin-bottom: 0;
+      margin-left: 0;
+    }
+
+    .product-details__image img {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.6rem;
+    }
+
+    .product-details__image figcaption {
+      margin-top: 0.8rem;
+      color: rgba(var(--color-foreground), 0.7);
+    }
+
+    @media screen and (max-width: 749px) {
+      .product-details__content {
+        padding: 1.4rem;
+      }
+
+      .product-details__item + .product-details__item {
+        margin-top: 1.8rem;
+      }
+    }
   {%- endstyle -%}
 
   <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
@@ -516,8 +554,40 @@
                       </span>
                       <span class="product-specifications__toggle" aria-hidden="true"></span>
                     </summary>
-                    <div class="accordion__content rte product-details__content">
-                      {{ block.settings.content }}
+                    <div class="accordion__content product-details__content">
+                      {%- for content_index in (1..3) -%}
+                        {%- liquid
+                          assign rich_text_key = 'rich_text_' | append: content_index
+                          assign image_key = 'image_' | append: content_index
+                          assign image_alt_key = image_key | append: '_alt'
+                          assign image_caption_key = image_key | append: '_caption'
+                          assign rich_text = block.settings[rich_text_key]
+                          assign detail_image = block.settings[image_key]
+                          assign image_alt = block.settings[image_alt_key] | default: detail_image.alt
+                          assign image_caption = block.settings[image_caption_key]
+                        -%}
+                        {%- if rich_text != blank -%}
+                          <div class="product-details__item product-details__rich-text rte">
+                            {{ rich_text }}
+                          </div>
+                        {%- endif -%}
+                        {%- if detail_image != blank -%}
+                          <figure class="product-details__item product-details__image">
+                            {{
+                              detail_image
+                              | image_url: width: 1400
+                              | image_tag:
+                                loading: 'lazy',
+                                widths: '320, 480, 640, 800, 1000, 1200, 1400',
+                                sizes: '(min-width: 990px) 50vw, calc(100vw - 40px)',
+                                alt: image_alt
+                            }}
+                            {%- if image_caption != blank -%}
+                              <figcaption class="caption">{{ image_caption | escape }}</figcaption>
+                            {%- endif -%}
+                          </figure>
+                        {%- endif -%}
+                      {%- endfor -%}
                     </div>
                   </details>
                 </div>
@@ -1056,12 +1126,6 @@
           "default": "Product Details"
         },
         {
-          "type": "richtext",
-          "id": "content",
-          "label": "Content",
-          "default": "<p>Add product details here.</p>"
-        },
-        {
           "type": "select",
           "id": "default_state",
           "label": "Default state",
@@ -1076,6 +1140,66 @@
             }
           ],
           "default": "open"
+        },
+        {
+          "type": "richtext",
+          "id": "rich_text_1",
+          "label": "Rich Text 1"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_1",
+          "label": "Image 1"
+        },
+        {
+          "type": "text",
+          "id": "image_1_alt",
+          "label": "Image 1 alt text"
+        },
+        {
+          "type": "text",
+          "id": "image_1_caption",
+          "label": "Image 1 caption"
+        },
+        {
+          "type": "richtext",
+          "id": "rich_text_2",
+          "label": "Rich Text 2"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_2",
+          "label": "Image 2"
+        },
+        {
+          "type": "text",
+          "id": "image_2_alt",
+          "label": "Image 2 alt text"
+        },
+        {
+          "type": "text",
+          "id": "image_2_caption",
+          "label": "Image 2 caption"
+        },
+        {
+          "type": "richtext",
+          "id": "rich_text_3",
+          "label": "Rich Text 3"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_3",
+          "label": "Image 3"
+        },
+        {
+          "type": "text",
+          "id": "image_3_alt",
+          "label": "Image 3 alt text"
+        },
+        {
+          "type": "text",
+          "id": "image_3_caption",
+          "label": "Image 3 caption"
         }
       ]
     },
